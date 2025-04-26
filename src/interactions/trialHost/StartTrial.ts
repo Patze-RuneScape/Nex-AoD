@@ -111,6 +111,14 @@ export default class Pass extends BotInteraction {
         return `<t:${Math.round(gametime.getTime() / 1000)}:f>`;
     }
 
+    public parseRelativeTime = (timeString: string): string => {
+        const [date, time] = timeString.split(' ');
+        const [year, month, day] = date.split('-').map(Number);
+        const [hours, minutes] = time.split(':').map(Number);
+        const gametime = new Date(Date.UTC(year, month - 1, day, hours, minutes))
+        return `<t:${Math.round(gametime.getTime() / 1000)}:R>`;
+    }
+
     async run(interaction: ChatInputCommandInteraction) {
         await interaction.deferReply({ ephemeral: true });
         const role: string = interaction.options.getString('role', true);
@@ -253,10 +261,12 @@ export default class Pass extends BotInteraction {
             \`Type:\` ${trialType === 'mock' ? 'Mock Trial' : 'Real Trial'}
             ${time ?
                     `\`Game Time:\` \`${time}\`
-                    \`Local Time:\` ${this.parseTime(time)}`
+                    \`Local Time:\` ${this.parseTime(time)}                    
+                    \`Relative Time:\` ${this.parseRelativeTime(time)}`
                     :
                     `\`Game Time:\` \`${finalDate}\`
-                    \`Local Time:\` ${this.parseTime(finalDate)}`}
+                    \`Local Time:\` ${this.parseTime(finalDate)}
+                    \`Relative Time:\` ${this.parseRelativeTime(finalDate)}`}
             \`World:\` ${region}\n
             > **Trialee**\n
             \`Discord:\` <@${user.id}>
