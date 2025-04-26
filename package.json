@@ -1,0 +1,36 @@
+{
+    "name": "Nex-Angel-of-Death",
+    "version": "1.0.0",
+    "description": "A bot made to help AoD 7-10 Administration",
+    "scripts": {
+        "build": "tsc --watch",
+        "start": "ts-node index.ts",
+        "start-js": "node ./dist/index.js"
+    },
+    "author": "Patze",
+    "license": "MIT",
+    "dependencies": {
+        "bufferutil": "^4.0.5",
+        "count-interval": "^1.0.1",
+        "discord-api-types": "^0.37.8",
+        "discord.js": "^14.15.2",
+        "dotenv": "^16.0.2",
+        "html-to-image": "^1.11.11",
+        "indomitable": "^2.0.2",
+        "petitio": "^1.4.0",
+        "reflect-metadata": "^0.1.13",
+        "sqlite3": "^5.1.4",
+        "typeorm": "^0.3.11",
+        "utf-8-validate": "^5.0.5",
+        "uuid": "^8.3.2"
+    },
+    "devDependencies": {
+        "@types/node": "^18.11.17",
+        "@types/uuid": "^8.3.4",
+        "eslint": "^8.1.0",
+        "ts-loader": "^9.3.1",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.4.5"
+    }
+}
+

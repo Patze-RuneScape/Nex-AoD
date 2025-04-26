@@ -28,4 +28,3 @@ db.json
 db-backups*
 *.sqlite
 index.ts
-package.json
