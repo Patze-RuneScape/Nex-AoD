@@ -121,8 +121,7 @@ export default class TrialLeaderboard extends BotInteraction {
                 break;
             }
         }
-	console.log(dateFrom);
-	console.log(dateTo);
+        
         // Get top 10 Trials hosted members
         const trialsHosted = await dataSource.createQueryBuilder()
             .select('trial.host', 'user')
