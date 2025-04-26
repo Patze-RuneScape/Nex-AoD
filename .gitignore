@@ -27,4 +27,3 @@ config-prod.json
 db.json
 db-backups*
 *.sqlite
-index.ts
