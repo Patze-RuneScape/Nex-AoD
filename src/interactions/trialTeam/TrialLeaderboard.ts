@@ -32,12 +32,27 @@ export default class TrialLeaderboard extends BotInteraction {
         return options;
     }
 
+    get regionOptions() {
+        const assignOptions: any = {
+            'North America': 'North America',
+            'Europe': 'German',
+        }
+        const options: any = [];
+        Object.keys(assignOptions).forEach((key: string) => {
+            options.push({ name: key, value: assignOptions[key] })
+        })
+        return options;
+    }
+
     get slashData() {
         return new SlashCommandBuilder()
             .setName(this.name)
             .setDescription(this.description)
             .addStringOption((option) => option.setName('timespan').setDescription('Time Span').addChoices(
                 ...this.timespanOptions
+            ).setRequired(false))
+            .addStringOption((option) => option.setName('region').setDescription('EU or NA, both if empty').addChoices(
+                ...this.regionOptions
             ).setRequired(false));
     }
 
@@ -71,6 +86,7 @@ export default class TrialLeaderboard extends BotInteraction {
         const { dataSource } = this.client;
         const { colours, roles } = this.client.util;
         let timespan: string | null = interaction.options.getString('timespan', false);
+        const region: string | null = interaction.options.getString('region', false);
 
         if (timespan == null){
             timespan = 'currentMonth';
@@ -121,6 +137,20 @@ export default class TrialLeaderboard extends BotInteraction {
                 break;
             }
         }
+
+        let whereRegion = '';
+        
+        if (region === 'North America') {
+            whereRegion = `trial.link like '%954775172609630218%'`;
+            description += " - NA only";
+        }
+        else if (region === 'German') {
+            whereRegion = `trial.link like '%765479967114919937%'`;
+            description += " - EU only";
+        }
+        else {
+            whereRegion = `trial.link = trial.link`;
+        }
         
         // Get top 10 Trials hosted members
         const trialsHosted = await dataSource.createQueryBuilder()
@@ -129,18 +159,20 @@ export default class TrialLeaderboard extends BotInteraction {
             .from(Trial, 'trial')
             .groupBy('trial.host')
             .where(`trial.createdAt BETWEEN :dateFrom AND :dateTo`, {dateFrom, dateTo})
+            .andWhere(whereRegion)
             .orderBy('count', 'DESC')
             .getRawMany();
 
         // Get top 10 Trials participated members
-        const trialsParticipated = await dataSource.createQueryBuilder()
-            .select('trialParticipation.participant', 'user')
-            .addSelect('COUNT(*)', 'count')
-            .from(TrialParticipation, 'trialParticipation')
-            .groupBy('trialParticipation.participant')
-            .where(`trialParticipation.createdAt BETWEEN :dateFrom AND :dateTo`, {dateFrom, dateTo})
-            .orderBy('count', 'DESC')
-            .getRawMany();
+        const trialsParticipated = await dataSource.createQueryBuilder(TrialParticipation, 'trialParticipation')                
+        .innerJoinAndSelect('trialParticipation.trial', 'trial')
+        .addSelect('trialParticipation.participant', 'user')
+        .addSelect('COUNT(*)', 'count')
+        .where(`trial.createdAt BETWEEN :dateFrom AND :dateTo`, {dateFrom, dateTo})
+        .andWhere(whereRegion)
+        .groupBy('trialParticipation.participant')
+        .orderBy('count', 'DESC')
+        .getRawMany();
 
         // Get total trials without making another database call
         let totalTrials = 0;
