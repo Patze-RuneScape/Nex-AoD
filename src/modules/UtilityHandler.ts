@@ -2,6 +2,7 @@ import * as config from '../../config.json';
 import { EmbedBuilder, ChatInputCommandInteraction, Interaction, APIEmbedField, ActionRowBuilder, StringSelectMenuOptionBuilder, StringSelectMenuBuilder, Role, ButtonBuilder, ButtonStyle} from 'discord.js';
 import Bot from '../Bot';
 import { Override } from '../entity/Override';
+import { get } from 'https';
 
 export default interface UtilityHandler {
     client: Bot;
@@ -245,12 +246,13 @@ export default class UtilityHandler {
                 colour_kc90k: '<@&1262091366163415051>',
                 colour_kc100k: '<@&1262896950756507741>',
                 colour_nexAodFCMember: '<@&1262092653944639498>',
-		greenSanta: '<@&1311749759114936442>',
+		        greenSanta: '<@&1311749759114936442>',
                 redSanta: '<@&1311749851683229748>',
                 purpleSanta: '<@&1311749933350785119>',
                 blueSanta: '<@&1311750005626900480>',
                 pinkSanta: '<@&1311750063919468735>',
                 blackSanta: '<@&1311750151181959168>',
+                editor: '<@&1195788882000752720>',
             }
         }
         return {
@@ -356,6 +358,7 @@ export default class UtilityHandler {
             blueSanta: '<@&1311083272012566629>',
             pinkSanta: '<@&1311083772078325861>',
             blackSanta: '<@&1311084184152047709>',
+            editor: '<@&1246805554089820201>',
         }
     }
     
@@ -706,4 +709,43 @@ export default class UtilityHandler {
             .addComponents(removeButton);
         return [actionRow, removeRow];
     }
+
+    public async fetchTextFile(url: string): Promise<string>{
+        return new Promise((resolve, reject) => {
+          get(url, (res) => {
+            const { statusCode } = res;
+            const contentType = res.headers['content-type'];
+      
+            // Check for HTTP status errors
+            if (statusCode !== 200) {
+              reject(new Error(`Request Failed. Status Code: ${statusCode}`));
+              res.resume();
+              return;
+            }
+      
+            // Ensure we are getting a text content type
+            if (!/^text\/plain/.test(contentType || '')) {
+              reject(new Error(`Invalid content-type. Expected text/plain but received ${contentType}`));
+              res.resume();
+              return;
+            }
+      
+            res.setEncoding('utf8');
+            let data = '';
+      
+            // Collect the data chunks
+            res.on('data', (chunk: string) => {
+              data += chunk;
+            });
+      
+            // When the response has ended, resolve the promise with the data
+            res.on('end', () => {
+              resolve(data);
+            });
+      
+          }).on('error', (err) => {
+            reject(err);
+          });
+        });
+      };
 }
