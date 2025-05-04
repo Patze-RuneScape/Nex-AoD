@@ -155,7 +155,7 @@ export default class ChangeTrialCard extends BotInteraction {
             const relativeTimeExpression: RegExp = /\`Relative Time:\` <t:(\d+):R>/;
             if (description){
                 const matchesTime = description.match(timeExpression);
-                parsedTime = matchesTime ? `${matchesTime[1]}-${matchesTime[2]}-${matchesTime[3]} ${matchesTime[4]}:${matchesTime[5]}` : '';
+                parsedTime = matchesTime ? `${matchesTime[1]}` : '';
                 if (parsedTime != time){
                     description = description.replace(`\`Game Time:\` \`${parsedTime}\``, `\`Game Time:\` \`${time}\``);
                 }
