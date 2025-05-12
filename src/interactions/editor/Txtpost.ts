@@ -41,7 +41,7 @@ export default class Txtpost extends BotInteraction {
 
         if (fileContent){
             //Parse the file
-            const expression: RegExp = /((\r?\n|^)[.].*?(\r?\n|$))/g;
+            const expression: RegExp = /((\r?\n|^)[.].*?(\r?\n|$))/gm;
             const tagExpression: RegExp = /[$]linkmsg_.*[$]/g;
 
             const txtpostMessages: TxtpostMessage[] = fileContent.split(expression).reduce((acc: TxtpostMessage[], part, index) => {
@@ -77,6 +77,7 @@ export default class Txtpost extends BotInteraction {
                 if (part == ".pin:delete"){
                     //previous message needs to be pinned
                     acc.at(-1)!.pin = true;
+                    return acc;
                 }
 
                 if (part.startsWith(".img:")){
@@ -135,6 +136,7 @@ export default class Txtpost extends BotInteraction {
                 //pin message if needed
                 if (message.pin){
                     await sentMessage?.pin();
+                    await (await channel.messages.fetch({ limit: 1})).first()?.delete();
                 }
             }            
         }        

@@ -252,7 +252,7 @@ export default class UtilityHandler {
                 blueSanta: '<@&1311750005626900480>',
                 pinkSanta: '<@&1311750063919468735>',
                 blackSanta: '<@&1311750151181959168>',
-                editor: '<@&1195788882000752720>',
+                editor: '<@&1370324695676620818>',
             }
         }
         return {
