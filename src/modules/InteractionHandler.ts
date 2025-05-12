@@ -110,6 +110,16 @@ export default class InteractionHandler extends EventEmitter {
     }
 
     async exec(interaction: Interaction): Promise<any> {
+        //if in develop mode, ignore all commands from main server
+        if (process.env.ENVIRONMENT === 'DEVELOPMENT' && interaction.guildId === '315710189762248705'){
+            return;
+        }
+
+        //prod mode ignores dev server
+        if (process.env.ENVIRONMENT === 'PRODUCTION' && interaction.guildId === '1370324695324561439'){
+            return;
+        }
+
         if (interaction.isButton() && interaction.inCachedGuild()) {
             return new ButtonHandler(this.client, interaction.customId, interaction);
         }

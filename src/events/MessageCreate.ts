@@ -23,6 +23,16 @@ export default class MessageCreate extends BotEvent {
         if (!message.inGuild()) return;
         if (this.client.util.config.guildMessageDisabled.includes(message.guild.id)) return;
 
+        //if in develop mode, ignore all commands from main server
+        if (process.env.ENVIRONMENT === 'DEVELOPMENT' && message.guildId === '315710189762248705'){
+            return;
+        }
+
+        //prod mode ignores dev server
+        if (process.env.ENVIRONMENT === 'PRODUCTION' && message.guildId === '1370324695324561439'){
+            return;
+        }
+
         // boop message
         if (message.content.startsWith(`<@${this.client.user?.id}> boop`)) {
             this.client.commandsRun++;
