@@ -1,5 +1,6 @@
 import BotInteraction from '../../types/BotInteraction';
 import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, Role, TextChannel, User } from 'discord.js';
+import { getRoles, getChannels } from '../../GuildSpecifics';
 
 interface Categories {
     [category: string]: string[];
@@ -94,11 +95,11 @@ export default class Pass extends BotInteraction {
     }
 
     public getTrialledRole = async (interaction: ChatInputCommandInteraction, roleKey: string): Promise<TrialledRole | undefined> => {
-        const { roles, stripRole } = this.client.util;
-        if (!roles[roleKey]) return;
-        const roleObject = await interaction.guild?.roles.fetch(stripRole(roles[roleKey])) as Role;
+        const { stripRole } = this.client.util;
+        if (!getRoles(interaction?.guild?.id)[roleKey]) return;
+        const roleObject = await interaction.guild?.roles.fetch(stripRole(getRoles(interaction?.guild?.id)[roleKey])) as Role;
         return {
-            key: roles[roleKey],
+            key: getRoles(interaction?.guild?.id)[roleKey],
             role: roleObject
         };
     }
@@ -127,7 +128,7 @@ export default class Pass extends BotInteraction {
         const trialType: string = interaction.options.getString('trialtype', true);
         const time: string | null = interaction.options.getString('time', false);
 
-        const { colours, channels, emojis } = this.client.util;
+        const { colours, emojis } = this.client.util;
 
         const expression = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})$/;
 
@@ -176,15 +177,15 @@ export default class Pass extends BotInteraction {
         let channelId: string;
         if (region === 'German') {
             if (trialType === 'mock') {
-                channelId = channels.euMock;
+                channelId = getChannels(interaction?.guild?.id).euMock;
             } else {
-                channelId = channels.euTrial;
+                channelId = getChannels(interaction?.guild?.id).euTrial;
             }
         } else {
             if (trialType === 'mock') {
-                channelId = channels.naMock;
+                channelId = getChannels(interaction?.guild?.id).naMock;
             } else {
-                channelId = channels.naTrial;
+                channelId = getChannels(interaction?.guild?.id).naTrial;
             }
         }
 

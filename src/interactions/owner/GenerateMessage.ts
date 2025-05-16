@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, TextChannel } from 'discord.js';
 // import { ApplicationCommandOptionType } from 'discord-api-types/v9';
 import BotInteraction from '../../types/BotInteraction';
+import { getRoles, getChannels } from '../../GuildSpecifics';
 
 export default class Eval extends BotInteraction {
     get name() {
@@ -38,7 +39,7 @@ export default class Eval extends BotInteraction {
     async run(interaction: ChatInputCommandInteraction<any>) {
         await interaction.deferReply({ ephemeral: true });
 
-        const { colours, roles, channels } = this.client.util;
+        const { colours } = this.client.util;
 
         const feature: string = interaction.options.getString('message', true);
 
@@ -51,11 +52,11 @@ export default class Eval extends BotInteraction {
                     .setColor(colours.gold)
                     .setDescription(`
                         > React to the roles below to add or remove the following roles:\n
-                        ⬥ 🇺🇸 - ${roles.pingNA}
-                        ⬥ 🇪🇺 - ${roles.pingEU}
-                        ⬥ 🌍 - ${roles.pingOffHour}
+                        ⬥ 🇺🇸 - ${getRoles(interaction?.guild?.id).pingNA}
+                        ⬥ 🇪🇺 - ${getRoles(interaction?.guild?.id).pingEU}
+                        ⬥ 🌍 - ${getRoles(interaction?.guild?.id).pingOffHour}
                     `)
-                const channel = await interaction.guild.channels.fetch(channels.mockInfo) as TextChannel;
+                const channel = await interaction.guild.channels.fetch(getChannels(interaction?.guild?.id).mockInfo) as TextChannel;
                 const message = await channel.send({ embeds: [infoEmbed] });
                 await message.react('🇺🇸');
                 await message.react('🇪🇺');

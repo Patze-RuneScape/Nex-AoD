@@ -1,5 +1,6 @@
 import BotInteraction from '../../types/BotInteraction';
 import { ChatInputCommandInteraction, SlashCommandBuilder, User, Role, TextChannel, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import { getRoles, getChannels } from '../../GuildSpecifics';
 
 export default class Trialed extends BotInteraction {
     get name() {
@@ -52,19 +53,19 @@ export default class Trialed extends BotInteraction {
         const userResponse: User = interaction.options.getUser('user', true);
         const role: string = interaction.options.getString('role', true);
 
-        const { roles, colours, channels, stripRole } = this.client.util;
+        const { colours, stripRole } = this.client.util;
 
-        const channel = await this.client.channels.fetch(channels.achievementsAndLogs) as TextChannel;
+        const channel = await this.client.channels.fetch(getChannels(interaction?.guild?.id).achievementsAndLogs) as TextChannel;
 
         const user = await interaction.guild?.members.fetch(userResponse.id);
         const userRoles = await user?.roles.cache.map(role => role.id) || [];
 
         let sendMessage = false;
         let sendPublic = true;
-        const roleObject = await interaction.guild?.roles.fetch(stripRole(roles[role])) as Role;
+        const roleObject = await interaction.guild?.roles.fetch(stripRole(getRoles(interaction?.guild?.id)[role])) as Role;
         let embedColour = colours.discord.green;
 
-        const roleId = stripRole(roles[role]);
+        const roleId = stripRole(getRoles(interaction?.guild?.id)[role]);
         await user?.roles.add(roleId);
         embedColour = roleObject.color;
         if (!(userRoles?.includes(roleId))) {
@@ -72,24 +73,24 @@ export default class Trialed extends BotInteraction {
         }
 
         // Don't send in public achievement channel if tt probation
-        if (roleId == stripRole(roles.trialTeamProbation)){
+        if (roleId == stripRole(getRoles(interaction?.guild?.id).trialTeamProbation)){
             sendPublic = false;
         }
 
         // Remove trialee
-        if (userRoles?.includes(stripRole(roles.trialee))) {
-            await user?.roles.remove(stripRole(roles.trialee));
+        if (userRoles?.includes(stripRole(getRoles(interaction?.guild?.id).trialee))) {
+            await user?.roles.remove(stripRole(getRoles(interaction?.guild?.id).trialee));
         }
 
         // Add 7-Man tag
-        if (!userRoles?.includes(stripRole(roles.sevenMan))) {
-            await user?.roles.add(stripRole(roles.sevenMan));
+        if (!userRoles?.includes(stripRole(getRoles(interaction?.guild?.id).sevenMan))) {
+            await user?.roles.add(stripRole(getRoles(interaction?.guild?.id).sevenMan));
         }
 
         // Remove tt probation if adding tt
-        if (roleId == stripRole(roles.trialTeam)
-            && userRoles?.includes(stripRole(roles.trialTeamProbation))) {
-            await user?.roles.remove(stripRole(roles.trialTeamProbation));
+        if (roleId == stripRole(getRoles(interaction?.guild?.id).trialTeam)
+            && userRoles?.includes(stripRole(getRoles(interaction?.guild?.id).trialTeamProbation))) {
+            await user?.roles.remove(stripRole(getRoles(interaction?.guild?.id).trialTeamProbation));
         }
 
         let returnedMessage = {
@@ -101,13 +102,13 @@ export default class Trialed extends BotInteraction {
             .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() || this.client.user?.avatarURL() || 'https://cdn.discordapp.com/attachments/1027186342620299315/1054206984360050709/445px-Reeves_pet.png' })
             .setTimestamp()
             .setColor(embedColour)
-            .setDescription(`Congratulations to <@${userResponse.id}> on achieving ${roles[role]}!`);
+            .setDescription(`Congratulations to <@${userResponse.id}> on achieving ${getRoles(interaction?.guild?.id)[role]}!`);
         if (sendMessage && channel && sendPublic) await channel.send({ embeds: [embed] }).then(message => {
             returnedMessage.id = message.id;
             returnedMessage.url = message.url;
         });
 
-        const logChannel = await this.client.channels.fetch(channels.botRoleLog) as TextChannel;
+        const logChannel = await this.client.channels.fetch(getChannels(interaction?.guild?.id).botRoleLog) as TextChannel;
         const buttonRow = new ActionRowBuilder<ButtonBuilder>()
             .addComponents(
                 new ButtonBuilder()
@@ -119,9 +120,9 @@ export default class Trialed extends BotInteraction {
             .setTimestamp()
             .setColor(embedColour)
             .setDescription(channel ? `
-            ${roles[role]} was assigned to <@${userResponse.id}> by <@${interaction.user.id}>.
+            ${getRoles(interaction?.guild?.id)[role]} was assigned to <@${userResponse.id}> by <@${interaction.user.id}>.
             **Message**: [${returnedMessage.id}](${returnedMessage.url})
-            ` : `${roles[role]} was assigned to <@${userResponse.id}> by <@${interaction.user.id}>.`);
+            ` : `${getRoles(interaction?.guild?.id)[role]} was assigned to <@${userResponse.id}> by <@${interaction.user.id}>.`);
         if (sendMessage) await logChannel.send({ embeds: [logEmbed], components: [buttonRow] });
 
         const replyEmbed = new EmbedBuilder()
@@ -129,7 +130,7 @@ export default class Trialed extends BotInteraction {
             .setColor(sendMessage ? colours.discord.green : colours.discord.red)
             .setDescription(sendMessage ? `
             **Member:** <@${userResponse.id}>
-            **Role:** ${roles[role]}
+            **Role:** ${getRoles(interaction?.guild?.id)[role]}
             ` : `This user either has this role, or a higher level role.`);
         await interaction.editReply({ embeds: [replyEmbed] });
     }

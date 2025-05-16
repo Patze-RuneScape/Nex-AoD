@@ -1,5 +1,6 @@
 import BotInteraction from '../../types/BotInteraction';
 import { ChatInputCommandInteraction, SlashCommandBuilder, User, Role, TextChannel, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import { getRoles, getChannels } from '../../GuildSpecifics';
 
 export default class ApproveTrialee extends BotInteraction {
     get name() {
@@ -25,12 +26,12 @@ export default class ApproveTrialee extends BotInteraction {
         await interaction.deferReply({ ephemeral: true });
         const userResponse: User = interaction.options.getUser('user', true);
 
-        const { roles, colours, channels, stripRole } = this.client.util;
+        const { colours, stripRole } = this.client.util;
 
         const user = await interaction.guild?.members.fetch(userResponse.id);
         const userRoles = await user?.roles.cache.map(role => role.id) || [];
 
-        const trialeeId = stripRole(roles.trialee);
+        const trialeeId = stripRole(getRoles(interaction?.guild?.id).trialee);
 
         const roleObject = await interaction.guild?.roles.fetch(trialeeId) as Role;
 
@@ -40,7 +41,7 @@ export default class ApproveTrialee extends BotInteraction {
             sendMessage = true;
         }
 
-        const logChannel = await this.client.channels.fetch(channels.botRoleLog) as TextChannel;
+        const logChannel = await this.client.channels.fetch(getChannels(interaction?.guild?.id).botRoleLog) as TextChannel;
         const buttonRow = new ActionRowBuilder<ButtonBuilder>()
             .addComponents(
                 new ButtonBuilder()
@@ -52,7 +53,7 @@ export default class ApproveTrialee extends BotInteraction {
             .setTimestamp()
             .setColor(roleObject.color || colours.discord.green)
             .setDescription(`
-            ${roles.trialee} was assigned to <@${userResponse.id}> by <@${interaction.user.id}>.
+            ${getRoles(interaction?.guild?.id).trialee} was assigned to <@${userResponse.id}> by <@${interaction.user.id}>.
             `);
         if (sendMessage) await logChannel.send({ embeds: [logEmbed], components: [buttonRow] });
 

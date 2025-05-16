@@ -1,5 +1,6 @@
 import BotInteraction from '../../types/BotInteraction';
 import { ChatInputCommandInteraction, SlashCommandBuilder, User, Role, TextChannel, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import { getRoles, getChannels } from '../../GuildSpecifics';
 
 interface RemoveHierarchy {
     [key: string]: string[];
@@ -82,9 +83,9 @@ export default class Cosmetic extends BotInteraction {
         const userResponse: User = interaction.options.getUser('user', true);
         const role: string = interaction.options.getString('role', true);
 
-        const { roles, colours, channels, stripRole, categorizeChannel, categorize, hierarchy } = this.client.util;
+        const { colours, stripRole, categorizeChannel, categorize, hierarchy } = this.client.util;
 
-        const outputChannelId = categorizeChannel(role) ? channels[categorizeChannel(role)] : '';
+        const outputChannelId = categorizeChannel(role) ? getChannels(interaction?.guild?.id)[categorizeChannel(role)] : '';
         let channel;
         if (outputChannelId) {
             channel = await this.client.channels.fetch(outputChannelId) as TextChannel;
@@ -94,7 +95,7 @@ export default class Cosmetic extends BotInteraction {
         const userRoles = await user?.roles.cache.map(role => role.id) || [];
 
         let sendMessage = false;
-        const roleObject = await interaction.guild?.roles.fetch(stripRole(roles[role])) as Role;
+        const roleObject = await interaction.guild?.roles.fetch(stripRole(getRoles(interaction?.guild?.id)[role])) as Role;
         let embedColour = colours.discord.green;
 
         const hasHigherRole = (role: string) => {
@@ -103,7 +104,7 @@ export default class Cosmetic extends BotInteraction {
                 const categorizedHierarchy = hierarchy[categorize(role)];
                 const sliceFromIndex: number = categorizedHierarchy.indexOf(role) + 1;
                 const hierarchyList = categorizedHierarchy.slice(sliceFromIndex);
-                const hierarchyIdList = hierarchyList.map((item: string) => stripRole(roles[item]));
+                const hierarchyIdList = hierarchyList.map((item: string) => stripRole(getRoles(interaction?.guild?.id)[item]));
                 const intersection = hierarchyIdList.filter((roleId: string) => userRoles.includes(roleId));
                 if (intersection.length === 0) {
                     return false
@@ -114,7 +115,7 @@ export default class Cosmetic extends BotInteraction {
             catch (err) { return false }
         }
 
-        const roleId = stripRole(roles[role]);
+        const roleId = stripRole(getRoles(interaction?.guild?.id)[role]);
         if (!hasHigherRole(role)) await user?.roles.add(roleId);
         embedColour = roleObject.color;
         
@@ -123,7 +124,7 @@ export default class Cosmetic extends BotInteraction {
         }
         if (role in this.removeHierarchy) {
             for await (const roleToRemove of this.removeHierarchy[role]) {
-                const removeRoleId = stripRole(roles[roleToRemove]);
+                const removeRoleId = stripRole(getRoles(interaction?.guild?.id)[roleToRemove]);
                 if (userRoles?.includes(removeRoleId)) await user?.roles.remove(removeRoleId);
             };
         }
@@ -137,13 +138,13 @@ export default class Cosmetic extends BotInteraction {
             .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() || this.client.user?.avatarURL() || 'https://cdn.discordapp.com/attachments/1027186342620299315/1054206984360050709/445px-Reeves_pet.png' })            
             .setTimestamp()
             .setColor(embedColour)
-            .setDescription(`Congratulations to <@${userResponse.id}> on achieving ${roles[role]}!`);
+            .setDescription(`Congratulations to <@${userResponse.id}> on achieving ${getRoles(interaction?.guild?.id)[role]}!`);
         if (sendMessage && channel) await channel.send({ embeds: [embed] }).then(message => {
             returnedMessage.id = message.id;
             returnedMessage.url = message.url;
         });
 
-        const logChannel = await this.client.channels.fetch(channels.botRoleLog) as TextChannel;
+        const logChannel = await this.client.channels.fetch(getChannels(interaction?.guild?.id).botRoleLog) as TextChannel;
         const buttonRow = new ActionRowBuilder<ButtonBuilder>()
             .addComponents(
                 new ButtonBuilder()
@@ -155,9 +156,9 @@ export default class Cosmetic extends BotInteraction {
             .setTimestamp()
             .setColor(embedColour)
             .setDescription(channel ? `
-            ${roles[role]} was assigned to <@${userResponse.id}> by <@${interaction.user.id}>.
+            ${getRoles(interaction?.guild?.id)[role]} was assigned to <@${userResponse.id}> by <@${interaction.user.id}>.
             **Message**: [${returnedMessage.id}](${returnedMessage.url})
-            ` : `${roles[role]} was assigned to <@${userResponse.id}> by <@${interaction.user.id}>.`);
+            ` : `${getRoles(interaction?.guild?.id)[role]} was assigned to <@${userResponse.id}> by <@${interaction.user.id}>.`);
         if (sendMessage) await logChannel.send({ embeds: [logEmbed], components: [buttonRow] });
 
         const replyEmbed = new EmbedBuilder()
@@ -165,7 +166,7 @@ export default class Cosmetic extends BotInteraction {
             .setColor(sendMessage ? colours.discord.green : colours.discord.red)
             .setDescription(sendMessage ? `
             **Member:** <@${userResponse.id}>
-            **Role:** ${roles[role]}
+            **Role:** ${getRoles(interaction?.guild?.id)[role]}
             ` : `This user either has this role, or a higher level role.`);
         await interaction.editReply({ embeds: [replyEmbed] });
     }

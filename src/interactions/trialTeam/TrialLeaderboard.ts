@@ -2,6 +2,7 @@ import BotInteraction from '../../types/BotInteraction';
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { Trial } from '../../entity/Trial';
 import { TrialParticipation } from '../../entity/TrialParticipation';
+import { getRoles } from '../../GuildSpecifics';
 
 export default class TrialLeaderboard extends BotInteraction {
     get name() {
@@ -84,7 +85,7 @@ export default class TrialLeaderboard extends BotInteraction {
     async run(interaction: ChatInputCommandInteraction) {
         await interaction.deferReply({ ephemeral: false });
         const { dataSource } = this.client;
-        const { colours, roles } = this.client.util;
+        const { colours } = this.client.util;
         let timespan: string | null = interaction.options.getString('timespan', false);
         const region: string | null = interaction.options.getString('region', false);
 
@@ -184,7 +185,7 @@ export default class TrialLeaderboard extends BotInteraction {
             .setTimestamp()
             .setTitle(`Trial Team Leaderboard (${description})`)
             .setColor(colours.gold)
-            .setDescription(`> There has been **${totalTrials}** trial${totalTrials !== 1 ? 's' : ''} recorded and **${trialsParticipated.length}** unique ${roles.trialTeam} members!`)
+            .setDescription(`> There has been **${totalTrials}** trial${totalTrials !== 1 ? 's' : ''} recorded and **${trialsParticipated.length}** unique ${getRoles(interaction?.guild?.id).trialTeam} members!`)
             .addFields(
                 { name: 'Trials Hosted', value: this.createFieldFromArray(trialsHosted.slice(0,10)), inline: true },
                 { name: 'Trials Participated', value: this.createFieldFromArray(trialsParticipated.slice(0,10)), inline: true }

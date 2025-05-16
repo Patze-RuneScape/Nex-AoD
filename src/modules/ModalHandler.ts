@@ -2,6 +2,7 @@ import { ModalSubmitInteraction, InteractionResponse, Message, APIEmbedField, Em
 import { Trial } from '../entity/Trial';
 import { TrialParticipation } from '../entity/TrialParticipation';
 import Bot from '../Bot';
+import { getRoles, getChannels } from '../GuildSpecifics';
 
 export default interface ModalHandler { client: Bot; id: string; interaction: ModalSubmitInteraction }
 
@@ -27,19 +28,19 @@ export default class ModalHandler {
 
     public assignRole = async (interaction: ModalSubmitInteraction<'cached'>, roleId: string, trialeeId: string) => {
 
-        const { roles, colours, channels, stripRole } = this.client.util;
+        const { colours, stripRole } = this.client.util;
 
         const trialee = await interaction.guild?.members.fetch(trialeeId);
         const trialeeRoles = await trialee?.roles.cache.map(role => role.id) || [];
 
         // Remove trialee
-        if (trialeeRoles?.includes(stripRole(roles.trialee))) {
-            await trialee?.roles.remove(stripRole(roles.trialee));
+        if (trialeeRoles?.includes(stripRole(getRoles(interaction.guild.id).trialee))) {
+            await trialee?.roles.remove(stripRole(getRoles(interaction.guild.id).trialee));
         }
 
         // Add 7-Man tag
-        if (!trialeeRoles?.includes(stripRole(roles.sevenMan))) {
-            await trialee?.roles.add(stripRole(roles.sevenMan));
+        if (!trialeeRoles?.includes(stripRole(getRoles(interaction.guild.id).sevenMan))) {
+            await trialee?.roles.add(stripRole(getRoles(interaction.guild.id).sevenMan));
         }
 
         await trialee?.roles.add(roleId);
@@ -53,7 +54,7 @@ export default class ModalHandler {
             url: ''
         };
 
-        const channel = await this.client.channels.fetch(channels.achievementsAndLogs) as TextChannel;
+        const channel = await this.client.channels.fetch(getChannels(interaction.guild.id).achievementsAndLogs) as TextChannel;
 
         const embed = new EmbedBuilder()
             .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() || this.client.user?.avatarURL() || 'https://cdn.discordapp.com/attachments/1027186342620299315/1054206984360050709/445px-Reeves_pet.png' })
@@ -65,7 +66,7 @@ export default class ModalHandler {
             returnedMessage.url = message.url;
         });
 
-        const logChannel = await this.client.channels.fetch(channels.botRoleLog) as TextChannel;
+        const logChannel = await this.client.channels.fetch(getChannels(interaction.guild.id).botRoleLog) as TextChannel;
         const buttonRow = new ActionRowBuilder<ButtonBuilder>()
             .addComponents(
                 new ButtonBuilder()
@@ -118,9 +119,9 @@ export default class ModalHandler {
     }
 
     private async passTrialee(interaction: ModalSubmitInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
-        const { colours, channels } = this.client.util;
+        const { colours } = this.client.util;
         await interaction.deferReply({ ephemeral: true });
-        const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
+        const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
         const messageEmbed = interaction.message?.embeds[0];
         const replyEmbed: EmbedBuilder = new EmbedBuilder();
         if (!messageEmbed) {
@@ -155,7 +156,7 @@ export default class ModalHandler {
             }
         }
         if (hasRolePermissions) {
-            const hasElevatedRole = await this.client.util.hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
+            const hasElevatedRole = await this.client.util.hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
             if ((interaction.user.id === userId) || hasElevatedRole) {
                 const splitResults = messageContent?.split('⬥');
                 if (!splitResults) {
@@ -176,7 +177,7 @@ export default class ModalHandler {
                     await this.assignRole(interaction, roleId, trialeeId);
                 }
 
-                const resultChannelId = channels.mockResult;
+                const resultChannelId = getChannels(interaction.guild.id).mockResult;
 
                 const resultChannel = await this.client.channels.fetch(resultChannelId) as TextChannel;
 
@@ -243,9 +244,9 @@ export default class ModalHandler {
     }
 
     private async failTrialee(interaction: ModalSubmitInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
-        const { colours, channels } = this.client.util;
+        const { colours } = this.client.util;
         await interaction.deferReply({ ephemeral: true });
-        const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
+        const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
         const messageEmbed = interaction.message?.embeds[0];
         const replyEmbed: EmbedBuilder = new EmbedBuilder();
         if (!messageEmbed) {
@@ -280,7 +281,7 @@ export default class ModalHandler {
             }
         }
         if (hasRolePermissions) {
-            const hasElevatedRole = await this.client.util.hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
+            const hasElevatedRole = await this.client.util.hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
             if ((interaction.user.id === userId) || hasElevatedRole) {
                 const splitResults = messageContent?.split('⬥');
                 if (!splitResults) {
@@ -296,7 +297,7 @@ export default class ModalHandler {
                 // Save trial to database.
                 await this.saveTrial(interaction, trialeeId, roleId, userId, fields);
 
-                const resultChannelId = channels.mockResult;
+                const resultChannelId = getChannels(interaction.guild.id).mockResult;
 
                 const resultChannel = await this.client.channels.fetch(resultChannelId) as TextChannel;
 

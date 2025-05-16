@@ -2,6 +2,7 @@ import { ActionRowBuilder, APIEmbedField, ButtonBuilder, ButtonInteraction, Butt
 import { Trial } from '../entity/Trial';
 import { TrialParticipation } from '../entity/TrialParticipation';
 import Bot from '../Bot';
+import { getRoles } from '../GuildSpecifics';
 
 export default interface ButtonHandler { client: Bot; id: string; interaction: ButtonInteraction }
 
@@ -24,7 +25,7 @@ export default class ButtonHandler {
             case 'disbandTrial': this.disbandTrial(interaction); break;
             case 'startTrial': this.startTrial(interaction); break;
             case 'removeColour': this.removeColour(interaction); break;
-	    case 'removeChristmasColour': this.removeChristmasColour(interaction); break;
+	        case 'removeChristmasColour': this.removeChristmasColour(interaction); break;
             default: break;
         }
     }
@@ -217,7 +218,7 @@ export default class ButtonHandler {
 
         const { hasOverridePermissions, hasRolePermissions } = this.client.util;
 
-        const rolePermissions = await hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
+        const rolePermissions = await hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
         const overridePermissions = await hasOverridePermissions(interaction, 'assign');
 
         if (rolePermissions || overridePermissions) {
@@ -262,7 +263,7 @@ export default class ButtonHandler {
     private async disbandTrial(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
         const { colours } = this.client.util;
         await interaction.deferReply({ ephemeral: true });
-        const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
+        const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
         const messageEmbed: Embed = interaction.message.embeds[0];
         const messageContent: string | undefined = messageEmbed.data.description;
         const expression: RegExp = /\`Host:\` <@(\d+)>/;
@@ -279,7 +280,7 @@ export default class ButtonHandler {
             }
         }
         if (hasRolePermissions) {
-            const hasElevatedRole = await this.client.util.hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
+            const hasElevatedRole = await this.client.util.hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
             if ((interaction.user.id === userId) || hasElevatedRole) {
                 const newMessageContent = messageContent?.replace('> **Team**', '');
                 const newEmbed = new EmbedBuilder()
@@ -309,7 +310,7 @@ export default class ButtonHandler {
     private async startTrial(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
         const { colours, isTeamFull } = this.client.util; // Add isTeamFull if team full is required again.
         await interaction.deferReply({ ephemeral: true });
-        const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
+        const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
         const messageEmbed: Embed = interaction.message.embeds[0];
         const messageContent: string | undefined = messageEmbed.data.description;
         const fields: APIEmbedField[] = messageEmbed.fields;
@@ -327,7 +328,7 @@ export default class ButtonHandler {
             }
         }
         if (hasRolePermissions) {
-            const hasElevatedRole = await this.client.util.hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
+            const hasElevatedRole = await this.client.util.hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
             if ((interaction.user.id === userId) || hasElevatedRole) {
                 if (isTeamFull(fields)) {
                     const trialStarted = `> **Moderation**\n\n ⬥ Trial started <t:${this.currentTime}:R>.\n\n> **Team**`;
@@ -376,7 +377,7 @@ export default class ButtonHandler {
     private async failTrialee(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
         const { hasOverridePermissions, hasRolePermissions } = this.client.util;
 
-        const rolePermissions = await hasRolePermissions(this.client, ['trialeeTeacher', 'trialHost', 'organizer', 'admin', 'owner'], interaction);
+        const rolePermissions = await hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
         const overridePermissions = await hasOverridePermissions(interaction, 'assign');
 
         if (rolePermissions || overridePermissions) {
@@ -421,7 +422,7 @@ export default class ButtonHandler {
     private async removeColour(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
         await interaction.deferReply({ ephemeral: true });
 
-        const { roles, cosmeticCollectionRoleNames, cosmeticKcRoleNames, cosmeticTrialedRoleNames, colours, stripRole } = this.client.util;
+        const { cosmeticCollectionRoleNames, cosmeticKcRoleNames, cosmeticTrialedRoleNames, colours, stripRole } = this.client.util;
         const user = await interaction.guild?.members.fetch(interaction.user.id);
         const userRoles = await user?.roles.cache.map(role => role.id) || [];
 
@@ -429,24 +430,24 @@ export default class ButtonHandler {
         for (const cosmeticRole of cosmeticTrialedRoleNames){
             const colourRole = `colour_${cosmeticRole}`;
             
-            if (userRoles.includes(stripRole(roles[colourRole]))) {
-                await user.roles.remove(stripRole(roles[colourRole]));
+            if (userRoles.includes(stripRole(getRoles(interaction.guild.id)[colourRole]))) {
+                await user.roles.remove(stripRole(getRoles(interaction.guild.id)[colourRole]));
             }
         }
 
         for (const cosmeticRole of cosmeticCollectionRoleNames){
             const colourRole = `colour_${cosmeticRole}`;
             
-            if (userRoles.includes(stripRole(roles[colourRole]))) {
-                await user.roles.remove(stripRole(roles[colourRole]));
+            if (userRoles.includes(stripRole(getRoles(interaction.guild.id)[colourRole]))) {
+                await user.roles.remove(stripRole(getRoles(interaction.guild.id)[colourRole]));
             }
         }
 
         for (const cosmeticRole of cosmeticKcRoleNames){
             const colourRole = `colour_${cosmeticRole}`;
             
-            if (userRoles.includes(stripRole(roles[colourRole]))) {
-                await user.roles.remove(stripRole(roles[colourRole]));
+            if (userRoles.includes(stripRole(getRoles(interaction.guild.id)[colourRole]))) {
+                await user.roles.remove(stripRole(getRoles(interaction.guild.id)[colourRole]));
             }
         }
 
@@ -458,13 +459,13 @@ export default class ButtonHandler {
 
     private async removeChristmasColour(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
         await interaction.deferReply({ ephemeral: true });
-        const { roles, christmasSantaRolesNames, colours, stripRole } = this.client.util;
+        const { christmasSantaRolesNames, colours, stripRole } = this.client.util;
         const user = await interaction.guild?.members.fetch(interaction.user.id);
         const userRoles = await user?.roles.cache.map(role => role.id) || [];
         //remove all other colour-roles
         for (const cosmeticRole of christmasSantaRolesNames){
-            if (userRoles.includes(stripRole(roles[cosmeticRole]))) {
-                await user.roles.remove(stripRole(roles[cosmeticRole]));
+            if (userRoles.includes(stripRole(getRoles(interaction.guild.id)[cosmeticRole]))) {
+                await user.roles.remove(stripRole(getRoles(interaction.guild.id)[cosmeticRole]));
             }
         }
         const resultEmbed = new EmbedBuilder()

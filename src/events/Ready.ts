@@ -1,6 +1,9 @@
 import { ActivityType, TextChannel } from 'discord.js';
 import Bot from '../Bot';
 import BotEvent from '../types/BotEvent';
+import { getChannels } from '../GuildSpecifics';
+import { guildId } from '../../config.json';
+
 export default class Ready extends BotEvent {
     get name(): string {
         return 'ready';
@@ -24,8 +27,8 @@ export default class Ready extends BotEvent {
         this.client.user?.setPresence({
             activities: [{ name: `you kill Nex!`, type: ActivityType.Watching }]
         });
-        const guild = await client.guilds.fetch(this.client.util.guildId);
-        const channel = await guild.channels.fetch(this.client.util.channels.mockInfo) as TextChannel;
+        const guild = await client.guilds.fetch(guildId);
+        const channel = await guild.channels.fetch(getChannels(guild.id).mockInfo) as TextChannel;
         await channel.messages.fetch(this.client.util.messages.mockTrialReacts).then(() => {
             this.client.logger.log({ message: `Mock Trial Reacts Loaded` }, true);
         });

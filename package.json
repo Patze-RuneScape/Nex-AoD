@@ -12,8 +12,8 @@
     "dependencies": {
         "bufferutil": "^4.0.5",
         "count-interval": "^1.0.1",
-        "discord-api-types": "^0.37.8",
-        "discord.js": "^14.15.2",
+        "discord-api-types": "^0.38.1",
+        "discord.js": "^14.19.3",
         "dotenv": "^16.0.2",
         "html-to-image": "^1.11.11",
         "https": "^1.0.0",

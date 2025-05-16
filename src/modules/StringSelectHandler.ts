@@ -1,5 +1,6 @@
 import { StringSelectMenuInteraction, InteractionResponse, Message, EmbedBuilder, Role } from 'discord.js';
 import Bot from '../Bot';
+import { getRoles } from '../GuildSpecifics';
 
 export default interface StringSelectHandler { client: Bot; id: string; interaction: StringSelectMenuInteraction }
 
@@ -31,9 +32,9 @@ export default class ModalHandler {
         await interaction.deferReply({ ephemeral: true });
         const selectedRole: string = interaction.values[0];
         const newColourRole: string = `colour_${selectedRole}`;
-        const { roles, cosmeticCollectionRoleNames, cosmeticKcRoleNames, cosmeticTrialedRoleNames, colours, stripRole, categorize, hierarchy, getColourPanelComponents } = this.client.util;
+        const { cosmeticCollectionRoleNames, cosmeticKcRoleNames, cosmeticTrialedRoleNames, colours, stripRole, categorize, hierarchy, getColourPanelComponents } = this.client.util;
         const user = await interaction.guild?.members.fetch(interaction.user.id);
-        const userRoles = await user?.roles.cache.map(role => role.id) || [];
+        const userRoles = await user?.roles.cache.map(role => role.id) || [];        
         
         //reset the StringSelectionMenu
         const getComps = getColourPanelComponents.bind(this.client.util)        
@@ -48,7 +49,7 @@ export default class ModalHandler {
                 const categorizedHierarchy = hierarchy[categorize(role)];
                 const sliceFromIndex: number = categorizedHierarchy.indexOf(role) + 1;
                 const hierarchyList = categorizedHierarchy.slice(sliceFromIndex);
-                const hierarchyIdList = hierarchyList.map((item: string) => stripRole(roles[item]));
+                const hierarchyIdList = hierarchyList.map((item: string) => stripRole(getRoles(interaction.guild.id)[item]));
                 const intersection = hierarchyIdList.filter((roleId: string) => userRoles.includes(roleId));
                 if (intersection.length === 0) {
                     return false
@@ -60,10 +61,10 @@ export default class ModalHandler {
         }
 
         //check if the user has the needed tag
-        if (!userRoles.includes(stripRole(roles[selectedRole])) && !hasHigherRole(selectedRole)) {
+        if (!userRoles.includes(stripRole(getRoles(interaction.guild.id)[selectedRole])) && !hasHigherRole(selectedRole)) {
             const errorEmbed = new EmbedBuilder()
                 .setColor(colours.discord.red)
-                .setDescription(`You need the ${roles[selectedRole]}-Tag to set this colour!`);
+                .setDescription(`You need the ${getRoles(interaction.guild.id)[selectedRole]}-Tag to set this colour!`);
             return await interaction.editReply({ embeds: [errorEmbed] });
         }
 
@@ -73,8 +74,8 @@ export default class ModalHandler {
             if (colourRole === newColourRole){
                 continue;
             }
-            if (userRoles.includes(stripRole(roles[colourRole]))) {
-                await user.roles.remove(stripRole(roles[colourRole]));
+            if (userRoles.includes(stripRole(getRoles(interaction.guild.id)[colourRole]))) {
+                await user.roles.remove(stripRole(getRoles(interaction.guild.id)[colourRole]));
             }
         }
 
@@ -83,8 +84,8 @@ export default class ModalHandler {
             if (colourRole === newColourRole){
                 continue;
             }
-            if (userRoles.includes(stripRole(roles[colourRole]))) {
-                await user.roles.remove(stripRole(roles[colourRole]));
+            if (userRoles.includes(stripRole(getRoles(interaction.guild.id)[colourRole]))) {
+                await user.roles.remove(stripRole(getRoles(interaction.guild.id)[colourRole]));
             }
         }
 
@@ -93,36 +94,36 @@ export default class ModalHandler {
             if (colourRole === newColourRole){
                 continue;
             }
-            if (userRoles.includes(stripRole(roles[colourRole]))) {
-                await user.roles.remove(stripRole(roles[colourRole]));
+            if (userRoles.includes(stripRole(getRoles(interaction.guild.id)[colourRole]))) {
+                await user.roles.remove(stripRole(getRoles(interaction.guild.id)[colourRole]));
             }
         }
 
         //check if the role exists
-        if (roles[newColourRole] == null){
+        if (getRoles(interaction.guild.id)[newColourRole] == null){
             const errorEmbed = new EmbedBuilder()
                 .setColor(colours.discord.red)
                 .setDescription('The selected role does not exist!');
             return await interaction.editReply({ embeds: [errorEmbed] });
         }
         
-        const colourRoleObject = await interaction.guild?.roles.fetch(stripRole(roles[newColourRole])) as Role;      
+        const colourRoleObject = await interaction.guild?.roles.fetch(stripRole(getRoles(interaction.guild.id)[newColourRole])) as Role;      
 
         //assign the colour-role to the user
-        if (!userRoles.includes(stripRole(roles[newColourRole]))) {
-            await user.roles.add(stripRole(roles[newColourRole]));
+        if (!userRoles.includes(stripRole(getRoles(interaction.guild.id)[newColourRole]))) {
+            await user.roles.add(stripRole(getRoles(interaction.guild.id)[newColourRole]));
         }
 
         const resultEmbed = new EmbedBuilder()
             .setColor(colourRoleObject != null ? colourRoleObject?.color : colours.discord.green)
-            .setDescription(`${roles[selectedRole]}-Colour successfully applied!`);
+            .setDescription(`${getRoles(interaction.guild.id)[selectedRole]}-Colour successfully applied!`);
         return await interaction.editReply({ embeds: [resultEmbed] });
     }
 
     private async setChristmasOverrideSelect(interaction: StringSelectMenuInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void>{
         await interaction.deferReply({ ephemeral: true });
         const selectedRole: string = interaction.values[0];
-        const { roles, christmasSantaRolesNames, colours, stripRole, getChristmasColourPanelComponents } = this.client.util;
+        const { christmasSantaRolesNames, colours, stripRole, getChristmasColourPanelComponents } = this.client.util;
         const user = await interaction.guild?.members.fetch(interaction.user.id);
         const userRoles = await user?.roles.cache.map(role => role.id) || [];
 
@@ -133,26 +134,26 @@ export default class ModalHandler {
         }
         //remove all other colour-roles
         for (const cosmeticRole of christmasSantaRolesNames){
-            if (userRoles.includes(stripRole(roles[cosmeticRole]))) {
-                await user.roles.remove(stripRole(roles[cosmeticRole]));
+            if (userRoles.includes(stripRole(getRoles(interaction.guild.id)[cosmeticRole]))) {
+                await user.roles.remove(stripRole(getRoles(interaction.guild.id)[cosmeticRole]));
             }
         }
         //check if the role exists
-        if (roles[selectedRole] == null){
+        if (getRoles(interaction.guild.id)[selectedRole] == null){
             const errorEmbed = new EmbedBuilder()
                 .setColor(colours.discord.red)
                 .setDescription('The selected role does not exist!');
             return await interaction.editReply({ embeds: [errorEmbed] });
         }
 
-        const colourRoleObject = await interaction.guild?.roles.fetch(stripRole(roles[selectedRole])) as Role;
+        const colourRoleObject = await interaction.guild?.roles.fetch(stripRole(getRoles(interaction.guild.id)[selectedRole])) as Role;
         //assign the colour-role to the user
-        if (!userRoles.includes(stripRole(roles[selectedRole]))) {
-            await user.roles.add(stripRole(roles[selectedRole]));
+        if (!userRoles.includes(stripRole(getRoles(interaction.guild.id)[selectedRole]))) {
+            await user.roles.add(stripRole(getRoles(interaction.guild.id)[selectedRole]));
         }
         const resultEmbed = new EmbedBuilder()
             .setColor(colourRoleObject != null ? colourRoleObject?.color : colours.discord.green)
-            .setDescription(`${roles[selectedRole]}-Colour successfully applied!`);
+            .setDescription(`${getRoles(interaction.guild.id)[selectedRole]}-Colour successfully applied!`);
         return await interaction.editReply({ embeds: [resultEmbed] });
     }
 }

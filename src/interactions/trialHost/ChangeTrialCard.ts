@@ -1,5 +1,6 @@
 import BotInteraction from '../../types/BotInteraction';
 import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, User, Role } from 'discord.js';
+import { getRoles } from '../../GuildSpecifics';
 
 interface TrialledRole {
     key: string;
@@ -53,11 +54,11 @@ export default class ChangeTrialCard extends BotInteraction {
     }
 
     public getTrialledRole = async (interaction: ChatInputCommandInteraction, roleKey: string): Promise<TrialledRole | undefined> => {
-        const { roles, stripRole } = this.client.util;
-        if (!roles[roleKey]) return;
-        const roleObject = await interaction.guild?.roles.fetch(stripRole(roles[roleKey])) as Role;
+        const { stripRole } = this.client.util;
+        if (!getRoles(interaction?.guild?.id)[roleKey]) return;
+        const roleObject = await interaction.guild?.roles.fetch(stripRole(getRoles(interaction?.guild?.id)[roleKey])) as Role;
         return {
-            key: roles[roleKey],
+            key: getRoles(interaction?.guild?.id)[roleKey],
             role: roleObject
         };
     }

@@ -1,6 +1,7 @@
 import BotInteraction from '../../types/BotInteraction';
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder, User } from 'discord.js';
 import { TrialParticipation } from '../../entity/TrialParticipation';
+import { getRoles } from '../../GuildSpecifics';
 
 export default class TrialTeamActivity extends BotInteraction {
     get name() {
@@ -33,7 +34,7 @@ export default class TrialTeamActivity extends BotInteraction {
     async run(interaction: ChatInputCommandInteraction) {
         await interaction.deferReply({ ephemeral: false });
         const { dataSource } = this.client;
-        const { roles, colours, stripRole } = this.client.util;
+        const { colours, stripRole } = this.client.util;
         const time: string | null = interaction.options.getString('time', false);
         const userResponse: User | null = interaction.options.getUser('user', false);
 	let user = null;
@@ -76,7 +77,7 @@ export default class TrialTeamActivity extends BotInteraction {
                     const userRoles = await user?.roles.cache.map(role => role.id) || [];
                     
                     // Don't list if user has no longer Trial Team or Trial Team - Probation
-                    if (userRoles?.includes(stripRole(roles.trialTeam)) || userRoles?.includes(stripRole(roles.trialTeamProbation)) || userRoles?.includes(stripRole(roles.trialHost))){
+                    if (userRoles?.includes(stripRole(getRoles(interaction?.guild?.id).trialTeam)) || userRoles?.includes(stripRole(getRoles(interaction?.guild?.id).trialTeamProbation)) || userRoles?.includes(stripRole(getRoles(interaction?.guild?.id).trialHost))){
                         nameList.push(`⬥ <@${trialParticipant.user}>`);
                         dateList.push(trialParticipant.lastTrial);
                         countList.push(trialParticipant.count);
