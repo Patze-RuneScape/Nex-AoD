@@ -248,6 +248,17 @@ export function getRoles(guildId: string | undefined) : Roles {
         }
     }
 
+    if (guildId === '742114133117501570') {
+        //Nex Aod FC
+        return {
+            trialHost: '<@&742114133419491395>',
+            organizer: '<@&742114133419491396>',
+            admin: '<@&742114133419491397>', //same as owner
+            owner: '<@&742114133419491397>',
+            editor: '<@742114133419491397>', //same as owner
+        }
+    }
+
     //unknown guild
     return {
 

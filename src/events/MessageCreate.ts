@@ -24,7 +24,7 @@ export default class MessageCreate extends BotEvent {
         if (this.client.util.config.guildMessageDisabled.includes(message.guild.id)) return;
 
         //if in develop mode, ignore all commands from main server
-        if (process.env.ENVIRONMENT === 'DEVELOPMENT' && message.guildId === '315710189762248705'){
+        if (process.env.ENVIRONMENT === 'DEVELOPMENT' && (message.guildId === '315710189762248705' || message.guildId === '742114133117501570')){
             return;
         }
 
@@ -70,7 +70,7 @@ export default class MessageCreate extends BotEvent {
             }
 
             let data: SlashCommandBuilder[] = [];
-            await this.buildCommands(data);
+            await this.buildCommands(data, message.guild.id);
 
             // global commands
             if (message.content.match(/global/gi)) {
@@ -99,11 +99,15 @@ export default class MessageCreate extends BotEvent {
         }
     }
 
-    private async buildCommands(data: any[]) {
+    private async buildCommands(data: any[], guildId: string) {
         for await (const directory of readdirSync(`${this.client.location}/src/interactions`, { withFileTypes: true })) {
             if (!directory.isDirectory()) continue;
             for await (const command of readdirSync(`${this.client.location}/src/interactions/${directory.name}`, { withFileTypes: true })) {
                 if (!command.isFile()) continue;
+
+                //FC only gets Txtpost Command
+                if (guildId === '742114133117501570' && !command.name.startsWith('Txtpost')) continue;
+
                 if (command.name.endsWith('.ts')) {
                     import(`${this.client.location}/src/interactions/${directory.name}/${command.name}`).then((interaction) => {
                         const Command: BotInteraction = new interaction.default(this.client);

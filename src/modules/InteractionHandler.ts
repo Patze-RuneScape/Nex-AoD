@@ -111,7 +111,7 @@ export default class InteractionHandler extends EventEmitter {
 
     async exec(interaction: Interaction): Promise<any> {
         //if in develop mode, ignore all commands from main server
-        if (process.env.ENVIRONMENT === 'DEVELOPMENT' && interaction.guildId === '315710189762248705'){
+        if (process.env.ENVIRONMENT === 'DEVELOPMENT' && (interaction.guildId === '315710189762248705' || interaction.guildId === '742114133117501570')){
             return;
         }
 
