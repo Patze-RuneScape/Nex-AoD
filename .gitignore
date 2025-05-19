@@ -27,3 +27,4 @@ config-prod.json
 db.json
 db-backups*
 *.sqlite
+*test.ts
