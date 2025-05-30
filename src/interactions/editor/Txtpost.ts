@@ -122,10 +122,10 @@ export default class Txtpost extends BotInteraction {
                 if (message.isEmbed){
                     //if message is an embed convert it
                     const jsonPost: any = JSON.parse(message.content);                    
-                    sentMessage = await channel?.send({embeds: [jsonPost.embed]});                    
+                    sentMessage = await channel?.send({embeds: [jsonPost.embed], allowedMentions: { "parse": [] }});                    
                 }
                 else{
-                    sentMessage = await channel?.send(message.content);
+                    sentMessage = await channel?.send({ content: message.content, allowedMentions: { "parse": [] }});
                 }
 
                 //remember url of sent message in case toc is needed
