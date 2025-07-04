@@ -1,5 +1,5 @@
 import BotInteraction from '../../types/BotInteraction';
-import { Attachment, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder, TextChannel } from 'discord.js';
+import { Attachment, ChatInputCommandInteraction, EmbedBuilder, MessageFlags, SlashCommandBuilder, TextChannel } from 'discord.js';
 
 export default class Say extends BotInteraction {
     get name() {
@@ -23,7 +23,7 @@ export default class Say extends BotInteraction {
     }
 
     async run(interaction: ChatInputCommandInteraction) {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const message: string = interaction.options.getString('message', true);
         const attachment: Attachment | null = interaction.options.getAttachment('image', false);
 	const channel = interaction.channel as TextChannel;

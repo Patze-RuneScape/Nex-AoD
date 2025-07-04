@@ -1,5 +1,5 @@
 import BotInteraction from '../../types/BotInteraction';
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from 'discord.js';
 
 export default class Ping extends BotInteraction {
     get name() {
@@ -16,7 +16,7 @@ export default class Ping extends BotInteraction {
 
     async run(interaction: ChatInputCommandInteraction) {
         const pingTime = Date.now();
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         await interaction.editReply(`Took \`${Date.now() - pingTime}ms\``);
     }
 }

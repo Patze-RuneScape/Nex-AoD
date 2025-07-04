@@ -1,5 +1,5 @@
 import BotInteraction from '../../types/BotInteraction';
-import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, User, Role } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, User, Role, MessageFlags } from 'discord.js';
 import { getRoles } from '../../GuildSpecifics';
 
 interface TrialledRole {
@@ -80,7 +80,7 @@ export default class ChangeTrialCard extends BotInteraction {
     }
 
     async run(interaction: ChatInputCommandInteraction) {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const role: string | null = interaction.options.getString('role', false);
         const user: User | null = interaction.options.getUser('host', false);        
         const messageId: string = interaction.options.getString('message_id', true);

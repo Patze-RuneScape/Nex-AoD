@@ -32,7 +32,7 @@ export default class TrialTeamActivity extends BotInteraction {
     }
 
     async run(interaction: ChatInputCommandInteraction) {
-        await interaction.deferReply({ ephemeral: false });
+        await interaction.deferReply();
         const { dataSource } = this.client;
         const { colours, stripRole } = this.client.util;
         const time: string | null = interaction.options.getString('time', false);

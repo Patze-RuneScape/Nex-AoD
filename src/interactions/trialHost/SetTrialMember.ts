@@ -1,5 +1,5 @@
 import BotInteraction from '../../types/BotInteraction';
-import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, User } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, User, MessageFlags } from 'discord.js';
 
 export default class SetTrialMember extends BotInteraction {
     get name() {
@@ -62,7 +62,7 @@ export default class SetTrialMember extends BotInteraction {
     }
 
     async run(interaction: ChatInputCommandInteraction) {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const role: string = interaction.options.getString('role', true);
         const user: User = interaction.options.getUser('user', true);
         const fillerType: string = interaction.options.getString('filler_type', true);

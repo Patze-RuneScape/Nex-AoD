@@ -83,7 +83,7 @@ export default class TrialLeaderboard extends BotInteraction {
     }
 
     async run(interaction: ChatInputCommandInteraction) {
-        await interaction.deferReply({ ephemeral: false });
+        await interaction.deferReply();
         const { dataSource } = this.client;
         const { colours } = this.client.util;
         let timespan: string | null = interaction.options.getString('timespan', false);

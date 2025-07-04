@@ -1,5 +1,5 @@
 import BotInteraction from '../../types/BotInteraction';
-import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, TextChannel } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, TextChannel, MessageFlags } from 'discord.js';
 
 export default class SendColourPanel extends BotInteraction {
     get name() {
@@ -36,7 +36,7 @@ export default class SendColourPanel extends BotInteraction {
     }
 
     async run(interaction: ChatInputCommandInteraction) {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
         const { colours, getColourPanelComponents, getChristmasColourPanelComponents } = this.client.util;
         const channel = interaction.channel as TextChannel;

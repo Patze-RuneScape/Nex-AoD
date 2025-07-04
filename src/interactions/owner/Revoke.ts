@@ -1,6 +1,6 @@
 import BotInteraction from '../../types/BotInteraction';
 import { Override } from '../../entity/Override';
-import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, User } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, User, MessageFlags } from 'discord.js';
 
 export default class Revoke extends BotInteraction {
     get name() {
@@ -37,7 +37,7 @@ export default class Revoke extends BotInteraction {
     }
 
     async run(interaction: ChatInputCommandInteraction) {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const feature: string = interaction.options.getString('feature', true);
         const user: User = interaction.options.getUser('user', true);
 

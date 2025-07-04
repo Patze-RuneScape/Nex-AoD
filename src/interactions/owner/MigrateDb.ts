@@ -1,5 +1,5 @@
 import BotInteraction from '../../types/BotInteraction';
-import { ChatInputCommandInteraction, SlashCommandBuilder, TextChannel, APIEmbedField, Message } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, TextChannel, APIEmbedField, Message, MessageFlags } from 'discord.js';
 import { TrialParticipation } from '../../entity/TrialParticipation';
 import { Trial } from '../../entity/Trial';
 
@@ -109,7 +109,7 @@ export default class MigrateDb extends BotInteraction {
     }
 
     async run(interaction: ChatInputCommandInteraction) {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         
         const naChannel = await this.client.channels.fetch('954775172609630218') as TextChannel;
         const euChannel = await this.client.channels.fetch('765479967114919937') as TextChannel;        

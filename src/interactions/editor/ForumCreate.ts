@@ -1,5 +1,5 @@
 import BotInteraction from '../../types/BotInteraction';
-import { ChatInputCommandInteraction, SlashCommandBuilder, ForumChannel, TextChannel, Attachment, ChannelType } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, ForumChannel, TextChannel, Attachment, ChannelType, MessageFlags } from 'discord.js';
 
 export default class ForumCreate extends BotInteraction {
     get name() {
@@ -25,7 +25,7 @@ export default class ForumCreate extends BotInteraction {
     }    
 
     async run(interaction: ChatInputCommandInteraction) {
-        await interaction.deferReply({ ephemeral: true });        
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });        
         const channel: TextChannel = interaction.options.getChannel('channel', true);
         const threadName: String = interaction.options.getString('name', true);
         const threadMessage: String = interaction.options.getString('message', true);

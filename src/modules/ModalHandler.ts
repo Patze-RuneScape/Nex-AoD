@@ -1,4 +1,4 @@
-import { ModalSubmitInteraction, InteractionResponse, Message, APIEmbedField, EmbedBuilder, TextChannel, Role, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import { ModalSubmitInteraction, InteractionResponse, Message, APIEmbedField, EmbedBuilder, TextChannel, Role, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } from 'discord.js';
 import { Trial } from '../entity/Trial';
 import { TrialParticipation } from '../entity/TrialParticipation';
 import Bot from '../Bot';
@@ -120,7 +120,7 @@ export default class ModalHandler {
 
     private async passTrialee(interaction: ModalSubmitInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
         const { colours } = this.client.util;
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
         const messageEmbed = interaction.message?.embeds[0];
         const replyEmbed: EmbedBuilder = new EmbedBuilder();
@@ -245,7 +245,7 @@ export default class ModalHandler {
 
     private async failTrialee(interaction: ModalSubmitInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
         const { colours } = this.client.util;
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
         const messageEmbed = interaction.message?.embeds[0];
         const replyEmbed: EmbedBuilder = new EmbedBuilder();

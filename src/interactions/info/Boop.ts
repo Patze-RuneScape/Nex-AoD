@@ -15,7 +15,7 @@ export default class Boop extends BotInteraction {
     }
 
     async run(interaction: ChatInputCommandInteraction) {
-        await interaction.deferReply({ ephemeral: false });
+        await interaction.deferReply();
         await interaction.editReply('🐊 🦘');
     }
 }

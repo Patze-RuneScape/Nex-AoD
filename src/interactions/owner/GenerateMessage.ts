@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, TextChannel } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, TextChannel, MessageFlags } from 'discord.js';
 // import { ApplicationCommandOptionType } from 'discord-api-types/v9';
 import BotInteraction from '../../types/BotInteraction';
 import { getRoles, getChannels } from '../../GuildSpecifics';
@@ -37,7 +37,7 @@ export default class Eval extends BotInteraction {
     }
 
     async run(interaction: ChatInputCommandInteraction<any>) {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
         const { colours } = this.client.util;
 

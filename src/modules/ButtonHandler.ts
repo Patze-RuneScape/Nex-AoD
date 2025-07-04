@@ -1,4 +1,4 @@
-import { ActionRowBuilder, APIEmbedField, ButtonBuilder, ButtonInteraction, ButtonStyle, Embed, EmbedBuilder, InteractionResponse, Message, ModalActionRowComponentBuilder, ModalBuilder, TextChannel, TextInputBuilder, TextInputStyle } from 'discord.js';
+import { ActionRowBuilder, APIEmbedField, ButtonBuilder, ButtonInteraction, ButtonStyle, Embed, EmbedBuilder, InteractionResponse, Message, ModalActionRowComponentBuilder, ModalBuilder, TextChannel, TextInputBuilder, TextInputStyle, MessageFlags } from 'discord.js';
 import { Trial } from '../entity/Trial';
 import { TrialParticipation } from '../entity/TrialParticipation';
 import Bot from '../Bot';
@@ -76,7 +76,7 @@ export default class ButtonHandler {
 
         const { colours, checkForUserId, getEmptyObject, getTeamCount } = this.client.util;
 
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const hasRolePermissions = await this.client.util.hasRolePermissions(this.client, ['trialTeamProbation', 'trialTeam', 'organizer', 'admin'], interaction);
         if (hasRolePermissions) {
             const messageEmbed = interaction.message.embeds[0];
@@ -157,7 +157,7 @@ export default class ButtonHandler {
     }
 
     private async rejectRoleAssign(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
         const { hasOverridePermissions, hasRolePermissions } = this.client.util;
 
@@ -248,7 +248,7 @@ export default class ButtonHandler {
             // Show the modal to the user
             await interaction.showModal(modal);
         } else {
-            await interaction.deferReply({ ephemeral: true });
+            await interaction.deferReply({ flags: MessageFlags.Ephemeral });
             this.client.logger.log(
                 {
                     message: `Attempted restricted permissions. { command: Pass Trialee, user: ${interaction.user.username}, channel: ${interaction.channel} }`,
@@ -262,7 +262,7 @@ export default class ButtonHandler {
 
     private async disbandTrial(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
         const { colours } = this.client.util;
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
         const messageEmbed: Embed = interaction.message.embeds[0];
         const messageContent: string | undefined = messageEmbed.data.description;
@@ -309,7 +309,7 @@ export default class ButtonHandler {
 
     private async startTrial(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
         const { colours, isTeamFull } = this.client.util; // Add isTeamFull if team full is required again.
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
         const messageEmbed: Embed = interaction.message.embeds[0];
         const messageContent: string | undefined = messageEmbed.data.description;
@@ -407,7 +407,7 @@ export default class ButtonHandler {
             // Show the modal to the user
             await interaction.showModal(modal);
         } else {
-            await interaction.deferReply({ ephemeral: true });
+            await interaction.deferReply({ flags: MessageFlags.Ephemeral });
             this.client.logger.log(
                 {
                     message: `Attempted restricted permissions. { command: Fail Trialee, user: ${interaction.user.username}, channel: ${interaction.channel} }`,
@@ -420,7 +420,7 @@ export default class ButtonHandler {
     }
 
     private async removeColour(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
         const { cosmeticCollectionRoleNames, cosmeticKcRoleNames, cosmeticTrialedRoleNames, colours, stripRole } = this.client.util;
         const user = await interaction.guild?.members.fetch(interaction.user.id);
@@ -458,7 +458,7 @@ export default class ButtonHandler {
     }
 
     private async removeChristmasColour(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const { christmasSantaRolesNames, colours, stripRole } = this.client.util;
         const user = await interaction.guild?.members.fetch(interaction.user.id);
         const userRoles = await user?.roles.cache.map(role => role.id) || [];

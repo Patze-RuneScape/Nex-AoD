@@ -1,5 +1,5 @@
 import BotInteraction from '../../types/BotInteraction';
-import { ChatInputCommandInteraction, SlashCommandBuilder, Role, EmbedBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, Role, EmbedBuilder, MessageFlags } from 'discord.js';
 import { getRoles, getMvpRole } from '../../GuildSpecifics';
 
 export default class SetColour extends BotInteraction {
@@ -25,7 +25,7 @@ export default class SetColour extends BotInteraction {
     }
 
     async run(interaction: ChatInputCommandInteraction) {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const colour: string = interaction.options.getString('colour', true);
 
         const { colours, stripRole } = this.client.util;

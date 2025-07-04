@@ -1,4 +1,4 @@
-import { StringSelectMenuInteraction, InteractionResponse, Message, EmbedBuilder, Role } from 'discord.js';
+import { StringSelectMenuInteraction, InteractionResponse, Message, EmbedBuilder, Role, MessageFlags } from 'discord.js';
 import Bot from '../Bot';
 import { getRoles } from '../GuildSpecifics';
 
@@ -29,7 +29,7 @@ export default class ModalHandler {
     }
 
     private async overrideColour(interaction: StringSelectMenuInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void>{
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const selectedRole: string = interaction.values[0];
         const newColourRole: string = `colour_${selectedRole}`;
         const { cosmeticCollectionRoleNames, cosmeticKcRoleNames, cosmeticTrialedRoleNames, colours, stripRole, categorize, hierarchy, getColourPanelComponents } = this.client.util;
@@ -121,7 +121,7 @@ export default class ModalHandler {
     }
 
     private async setChristmasOverrideSelect(interaction: StringSelectMenuInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void>{
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const selectedRole: string = interaction.values[0];
         const { christmasSantaRolesNames, colours, stripRole, getChristmasColourPanelComponents } = this.client.util;
         const user = await interaction.guild?.members.fetch(interaction.user.id);
