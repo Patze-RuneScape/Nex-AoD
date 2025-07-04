@@ -1,5 +1,5 @@
 import BotInteraction from '../../types/BotInteraction';
-import { Attachment, ChatInputCommandInteraction, SlashCommandBuilder, Message, TextChannel } from 'discord.js';
+import { Attachment, ChatInputCommandInteraction, SlashCommandBuilder, Message, TextChannel, MessageFlags } from 'discord.js';
 
 interface TxtpostMessage {
     content: string;
@@ -7,6 +7,7 @@ interface TxtpostMessage {
     tag: string | null;
     pin: boolean;
     url: string | null;
+    isCompnentsV2: boolean;
 }
 
 export default class Txtpost extends BotInteraction {
@@ -30,7 +31,7 @@ export default class Txtpost extends BotInteraction {
     }    
 
     async run(interaction: ChatInputCommandInteraction) {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const attachment: Attachment = interaction.options.getAttachment('file', true);        
         const { fetchTextFile } = this.client.util;
         const channel = interaction.channel as TextChannel;
@@ -67,6 +68,12 @@ export default class Txtpost extends BotInteraction {
                     return acc;
                 }
 
+                if (part == ".componentsV2:json"){
+                    //previous message was an componentsV2 container
+                    acc.at(-1)!.isCompnentsV2 = true;
+                    return acc;
+                }
+
                 if (part.startsWith(".tag:")){
                     //next message will be an tagged message
                     taggedMessage = true;
@@ -91,7 +98,8 @@ export default class Txtpost extends BotInteraction {
                     isEmbed: false,
                     tag: null,
                     pin: false,
-                    url: null
+                    url: null,
+                    isCompnentsV2: false
                 };
 
                 //check if it has an tag
@@ -123,6 +131,11 @@ export default class Txtpost extends BotInteraction {
                     //if message is an embed convert it
                     const jsonPost: any = JSON.parse(message.content);                    
                     sentMessage = await channel?.send({embeds: [jsonPost.embed], allowedMentions: { "parse": [] }});                    
+                }
+                else if (message.isCompnentsV2){
+                    //if message is an componentsV2 container convert it
+                    const jsonPost: any = JSON.parse(message.content);
+                    sentMessage = await channel.send({components: [jsonPost], flags: MessageFlags.IsComponentsV2, allowedMentions: { "parse": [] }});
                 }
                 else{
                     sentMessage = await channel?.send({ content: message.content, allowedMentions: { "parse": [] }});
