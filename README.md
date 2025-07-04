@@ -1,5 +1,5 @@
-# AoD 7-10 Utility Bot
-A project for AoD 7-10 Discord staff.
+# Nex, Angel of Death Utility Bot
+A project for Nex, Angel of Death Discord staff.
 
 <a href="https://discord.gg/2rd8Vqe"><img src="https://discordapp.com/api/guilds/315710189762248705/widget.png?style=banner2" alt="Discord invite"></a>
 

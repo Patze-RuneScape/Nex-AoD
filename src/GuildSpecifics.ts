@@ -30,7 +30,7 @@ export function getChannels(guildId: string | undefined) : Channels {
     }
 
     if (guildId === '315710189762248705') {
-        //AoD: 7-10 Man
+        //Nex, Angel of Death
         return {
             achievementsAndLogs: '1058373790289109092',
             botRoleLog: '1058373508314431528',
@@ -154,7 +154,7 @@ export function getRoles(guildId: string | undefined) : Roles {
     }
 
     if (guildId === '315710189762248705') {
-        //AoD: 7-10 Man
+        //Nex, Angel of Death
         return {
             trialHost: '<@&635646418123751434>',
             organizer: '<@&374393957645287426>',
@@ -307,7 +307,7 @@ export function getMvpRole(guildId: string | undefined, userId: string) : string
     }
 
     if (guildId === '315710189762248705') {
-        //AoD: 7-10 Man
+        //Nex, Angel of Death
         const data: any = {
             // Rocket
             '259011909976719360': '1121741706765795440',
