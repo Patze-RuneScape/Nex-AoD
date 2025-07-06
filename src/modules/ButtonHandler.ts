@@ -26,7 +26,11 @@ export default class ButtonHandler {
             case 'startTrial': this.startTrial(interaction); break;
             case 'removeColour': this.removeColour(interaction); break;
 	        case 'removeChristmasColour': this.removeChristmasColour(interaction); break;
-            default: break;
+            default: 
+                if (id.startsWith('selfassign')) {
+                    this.handleSelfAssign(interaction, id.slice(11));
+                }
+                break;
         }
     }
 
@@ -37,6 +41,8 @@ export default class ButtonHandler {
     get currentTime(): number {
         return Math.round(Date.now() / 1000)
     }
+
+    //#region trials
 
     public async saveTrial(interaction: ButtonInteraction<'cached'>, trialeeId: string, roleId: string, userId: string, fields: APIEmbedField[]): Promise<void> {
         // Create new Trial.
@@ -154,64 +160,6 @@ export default class ButtonHandler {
 
     private async selectFumus(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
         await this.handleRoleSelection(interaction, 'Fumus');
-    }
-
-    private async rejectRoleAssign(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
-        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
-        const { hasOverridePermissions, hasRolePermissions } = this.client.util;
-
-        const rolePermissions = await hasRolePermissions(this.client, ['organizer', 'admin', 'owner'], interaction);
-        const overridePermissions = await hasOverridePermissions(interaction, 'assign');
-
-        if (rolePermissions || overridePermissions) {
-            const messageEmbed = interaction.message.embeds[0];
-            const messageContent = messageEmbed.data.description;
-            const oldTimestamp = messageEmbed.timestamp ? new Date(messageEmbed.timestamp) : new Date();
-            const newEmbed = new EmbedBuilder()
-                .setTimestamp(oldTimestamp)
-                .setColor(messageEmbed.color)
-                .setDescription(`${messageContent}\n\n> Role Rejected by <@${this.userId}> <t:${this.currentTime}:R>.`);
-            const assignedRoles = messageContent?.match(/<@&\d*\>/gm)?.map(unstrippedRole => this.client.util.stripRole(unstrippedRole));
-            const userIdRegex = messageContent?.match(/to <@\d*\>/gm);
-            const messageIdRegex = messageContent?.match(/\[\d*\]/gm)
-            let dirtyUserId;
-            let dirtyMessageId;
-            if (!assignedRoles) return;
-            if (userIdRegex) dirtyUserId = userIdRegex[0];
-            if (messageIdRegex) dirtyMessageId = messageIdRegex[0];
-            if (dirtyUserId) {
-                const userId = dirtyUserId.slice(5, -1);
-                const user = await interaction.guild?.members.fetch(userId);
-                for await (const assignedId of assignedRoles) {
-                    await user.roles.remove(assignedId);
-                };
-            }
-            if (dirtyMessageId && messageContent) {
-                try {
-                    const messageId = dirtyMessageId.slice(1, -1);
-                    const channelId = messageContent.split('/channels/')[1].split('/')[1];
-                    const channel = await interaction.guild.channels.fetch(channelId) as TextChannel;
-                    const message = await channel.messages.fetch(messageId);
-                    await message.delete();
-                }
-                catch (err) { }
-            }
-            await interaction.message.edit({ embeds: [newEmbed], components: [] })
-            const replyEmbed = new EmbedBuilder()
-                .setColor(this.client.util.colours.discord.green)
-                .setDescription('Role successfully rejected!');
-            return await interaction.editReply({ embeds: [replyEmbed] });
-        } else {
-            this.client.logger.log(
-                {
-                    message: `Attempted restricted permissions. { command: Reject Role Assign, user: ${interaction.user.username}, channel: ${interaction.channel} }`,
-                    handler: this.constructor.name,
-                },
-                true
-            );
-            return await interaction.editReply({ content: 'You do not have permissions to run this command. This incident has been logged.' });
-        }
     }
 
     private async passTrialee(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
@@ -419,6 +367,71 @@ export default class ButtonHandler {
         }
     }
 
+    //#endregion
+
+    //#region moderation
+
+    private async rejectRoleAssign(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
+        const { hasOverridePermissions, hasRolePermissions } = this.client.util;
+
+        const rolePermissions = await hasRolePermissions(this.client, ['organizer', 'admin', 'owner'], interaction);
+        const overridePermissions = await hasOverridePermissions(interaction, 'assign');
+
+        if (rolePermissions || overridePermissions) {
+            const messageEmbed = interaction.message.embeds[0];
+            const messageContent = messageEmbed.data.description;
+            const oldTimestamp = messageEmbed.timestamp ? new Date(messageEmbed.timestamp) : new Date();
+            const newEmbed = new EmbedBuilder()
+                .setTimestamp(oldTimestamp)
+                .setColor(messageEmbed.color)
+                .setDescription(`${messageContent}\n\n> Role Rejected by <@${this.userId}> <t:${this.currentTime}:R>.`);
+            const assignedRoles = messageContent?.match(/<@&\d*\>/gm)?.map(unstrippedRole => this.client.util.stripRole(unstrippedRole));
+            const userIdRegex = messageContent?.match(/to <@\d*\>/gm);
+            const messageIdRegex = messageContent?.match(/\[\d*\]/gm)
+            let dirtyUserId;
+            let dirtyMessageId;
+            if (!assignedRoles) return;
+            if (userIdRegex) dirtyUserId = userIdRegex[0];
+            if (messageIdRegex) dirtyMessageId = messageIdRegex[0];
+            if (dirtyUserId) {
+                const userId = dirtyUserId.slice(5, -1);
+                const user = await interaction.guild?.members.fetch(userId);
+                for await (const assignedId of assignedRoles) {
+                    await user.roles.remove(assignedId);
+                };
+            }
+            if (dirtyMessageId && messageContent) {
+                try {
+                    const messageId = dirtyMessageId.slice(1, -1);
+                    const channelId = messageContent.split('/channels/')[1].split('/')[1];
+                    const channel = await interaction.guild.channels.fetch(channelId) as TextChannel;
+                    const message = await channel.messages.fetch(messageId);
+                    await message.delete();
+                }
+                catch (err) { }
+            }
+            await interaction.message.edit({ embeds: [newEmbed], components: [] })
+            const replyEmbed = new EmbedBuilder()
+                .setColor(this.client.util.colours.discord.green)
+                .setDescription('Role successfully rejected!');
+            return await interaction.editReply({ embeds: [replyEmbed] });
+        } else {
+            this.client.logger.log(
+                {
+                    message: `Attempted restricted permissions. { command: Reject Role Assign, user: ${interaction.user.username}, channel: ${interaction.channel} }`,
+                    handler: this.constructor.name,
+                },
+                true
+            );
+            return await interaction.editReply({ content: 'You do not have permissions to run this command. This incident has been logged.' });
+        }
+    }
+
+    //#endregion    
+
+    //#region vanity tag
     private async removeColour(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
@@ -473,4 +486,97 @@ export default class ButtonHandler {
             .setDescription('Roles successfully removed!');
         return await interaction.editReply({ embeds: [resultEmbed] });
     }
+
+    private async handleSelfAssign(interaction: ButtonInteraction<'cached'>, id: string) : Promise<Message<true> | InteractionResponse<true> | void> {
+        await interaction.deferReply({flags: MessageFlags.Ephemeral});
+        const { colours, categorize, hierarchy, stripRole } = this.client.util;
+        const user = await interaction.guild?.members.fetch(interaction.user.id);
+        const userRoles = await user?.roles.cache.map(role => role.id) || [];
+
+        //parse the id <role>{;<neededRole>;<neededRole>}
+        //first id has always the 'to-be-assigned'-Role, ids after are check-roles if user has sufficient tag
+        const roleIds: string[] = id.split(";");
+        let roleReqError: string = "";
+        const addResultEmbed = new EmbedBuilder()
+            .setColor(colours.discord.green)
+            .setDescription(`<@&${roleIds[0]}> successfully applied.`);
+        
+        const removeResultEmbed = new EmbedBuilder()
+            .setColor(colours.discord.green)
+            .setDescription(`<@&${roleIds[0]}> successfully removed.`);
+
+        //Blacklist tags that are able to change roles
+        const roleObject = interaction.guild.roles.cache.get(roleIds[0]);
+
+        if (roleObject?.permissions.has('ManageRoles')) {
+            return await interaction.editReply({embeds: [new EmbedBuilder()
+                .setColor(colours.discord.red)
+                .setDescription(`Unallowed Role-Assign!`)]});
+        }
+
+        //remove should always work
+        if (userRoles.includes(roleIds[0])) {
+            await user.roles.remove(roleIds[0]);
+            return await interaction.editReply({embeds: [removeResultEmbed]});
+        } else if (roleIds.length == 1) {
+            //if it's only assign, just do it
+            if (!userRoles.includes(roleIds[0])) {
+                await user.roles.add(roleIds[0]);
+                return await interaction.editReply({embeds: [addResultEmbed]});
+            }
+        } else if (roleIds.length > 1) {
+            //special logic for hierarchy tags            
+            const hasRoleOrHigher = (role: string) => {
+                try {
+                    if (!categorize(role) || categorize(role) === 'vanity' || categorize(role) === '') return false;                
+                    const categorizedHierarchy = hierarchy[categorize(role)];
+                    const sliceFromIndex: number = categorizedHierarchy.indexOf(role);
+                    const hierarchyList = categorizedHierarchy.slice(sliceFromIndex);
+                    const hierarchyIdList = hierarchyList.map((item: string) => stripRole(getRoles(interaction.guild.id)[item]));
+                    const intersection = hierarchyIdList.filter((roleId: string) => userRoles.includes(roleId));
+                    if (intersection.length === 0) {
+                        return false
+                    } else {
+                        return true
+                    };
+                }
+                catch (err) { return false }
+            }
+
+            //check for required tags
+            for (let i = 1; i < roleIds.length; i++) {
+                if (!/^[+-]?\d+(\.\d+)?$/.test(roleIds[i])) { 
+                    if (hasRoleOrHigher(roleIds[i])) {
+                        await user.roles.add(roleIds[0]);
+                        return await interaction.editReply({embeds: [addResultEmbed]});                        
+                    } else {
+                        if (i > 1) {
+                            roleReqError += ", ";
+                        }
+
+                        roleReqError += getRoles(interaction.guild.id)[roleIds[i]];
+                    }
+                } else {
+                    if (userRoles.includes(roleIds[i])) {
+                        await user.roles.add(roleIds[0]);
+                        return await interaction.editReply({embeds: [addResultEmbed]});
+                    }
+                    if (i > 1) {
+                        roleReqError += ", ";
+                    }
+
+                    roleReqError += `<@&${roleIds[i]}>`;
+                    }                    
+            }
+                        
+            const errorEmbed = new EmbedBuilder()
+                .setColor(colours.discord.red)
+                .setDescription(`You need any of the following tags to set this colour!\nTags:${roleReqError}`);
+            return await interaction.editReply({ embeds: [errorEmbed] });
+        }
+
+        return interaction.editReply("somehow i did nothing?");
+    }
+
+    //#endregion
 }
