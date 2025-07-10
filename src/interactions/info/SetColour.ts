@@ -1,6 +1,7 @@
 import BotInteraction from '../../types/BotInteraction';
 import { ChatInputCommandInteraction, SlashCommandBuilder, Role, EmbedBuilder, MessageFlags } from 'discord.js';
-import { getRoles, getMvpRole } from '../../GuildSpecifics';
+import { getRoles } from '../../GuildSpecifics';
+import { MvpContributor } from '../../entity/MvpContributor';
 
 export default class SetColour extends BotInteraction {
 
@@ -33,36 +34,38 @@ export default class SetColour extends BotInteraction {
         const user = await interaction.guild?.members.fetch(interaction.user.id);
         const userRoles = await user?.roles.cache.map(role => role.id) || [];
 
-        if (!userRoles.includes(stripRole(getRoles(interaction?.guild?.id)['mvp']))) {
-            const errorEmbed = new EmbedBuilder()
-                .setColor(colours.discord.red)
-                .setDescription('You are not a MVP Contributor. Contribute to the discord and get recognized!');
-            return await interaction.editReply({ embeds: [errorEmbed] });
-        }
+        const { dataSource } = this.client;
+        const repository = dataSource.getRepository(MvpContributor);
 
-        if (!this.isValidHexCode(colour)) {
-            const errorEmbed = new EmbedBuilder()
-                .setColor(colours.discord.red)
-                .setDescription('Colour is not a valid Hex code.');
-            return await interaction.editReply({ embeds: [errorEmbed] });
-        }
-
-        try {
-            const roleId = getMvpRole(interaction.guild?.id, interaction.user.id);
-            if (roleId) {
-                const roleObject = await interaction.guild?.roles.fetch(roleId) as Role;
-                roleObject.setColor(colour as any);
-            } else {
-                throw new Error('No role exists.')
+        const existingEntry = await repository.findOne({
+            where: {
+                guild: interaction.guild?.id,
+                user: interaction.user.id,
             }
+        });
+
+        //check if user is a mvp
+        if (existingEntry && userRoles.includes(stripRole(getRoles(interaction?.guild?.id).mvp))) {
+            //check value
+            if (!this.isValidHexCode(colour)) {
+                const errorEmbed = new EmbedBuilder()
+                    .setColor(colours.discord.red)
+                    .setDescription('Colour is not a valid Hex code.');
+                return await interaction.editReply({ embeds: [errorEmbed] });
+            }
+
+            //assign colour
+            const roleObject = await interaction.guild?.roles.fetch(existingEntry.role) as Role;
+            roleObject.setColor(colour as any);
+
             const replyEmbed = new EmbedBuilder()
                 .setColor(colour || (colours.gold as any))
                 .setDescription(`Colour set to **${colour}**!`);
             return await interaction.editReply({ embeds: [replyEmbed] });
-        } catch {
+        } else {
             const errorEmbed = new EmbedBuilder()
                 .setColor(colours.discord.red)
-                .setDescription('Something went wrong!');
+                .setDescription('You are not a MVP Contributor. Contribute to the discord and get recognized!');
             return await interaction.editReply({ embeds: [errorEmbed] });
         }
     }
