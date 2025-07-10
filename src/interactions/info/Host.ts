@@ -28,12 +28,12 @@ export default class Host extends BotInteraction {
             .setDescription(this.description)            
             .addStringOption((option) => option.setName('type').setDescription('7- or 4-Man').addChoices(
                 ...this.hostTypes
-            ).setRequired(true))            
+            ).setRequired(false))            
     }
 
     async run(interaction: ChatInputCommandInteraction) {
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-        const type: string = interaction.options.getString('type', true);
+        const type: string = interaction.options.getString('type', false) ?? '7man';
         const is7man = type === '7man';
         const { colours, emojis } = this.client.util;
         
