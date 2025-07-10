@@ -25,7 +25,7 @@ export default class ApproveFourMan extends BotInteraction {
     async run(interaction: ChatInputCommandInteraction) {
         await interaction.deferReply({flags: MessageFlags.Ephemeral});
         const userResponse: User = interaction.options.getUser('user', true);
-        
+
         const { colours, stripRole } = this.client.util;
 
         const user = await interaction.guild?.members.fetch(userResponse.id);

@@ -28,14 +28,14 @@ export default class Txtpost extends BotInteraction {
             .setName(this.name)
             .setDescription(this.description)
             .addAttachmentOption((option) => option.setName('file').setDescription('The txt-file attachment you want to send.').setRequired(true));
-    }    
+    }
 
     async run(interaction: ChatInputCommandInteraction) {
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-        const attachment: Attachment = interaction.options.getAttachment('file', true);        
+        const attachment: Attachment = interaction.options.getAttachment('file', true);
         const { fetchTextFile } = this.client.util;
         const channel = interaction.channel as TextChannel;
-        
+
         const fileContent: string = await fetchTextFile(attachment.url);
         let taggedMessage = false;
         let tagName: string | null = null;
@@ -47,13 +47,13 @@ export default class Txtpost extends BotInteraction {
 
             const txtpostMessages: TxtpostMessage[] = fileContent.split(expression).reduce((acc: TxtpostMessage[], part, index) => {
                 part = part.trim();
-                
+
                 if (part == null || part == ""){
                     return acc;
                 }
 
                 if (part == "." || part == ".\r\n" || part == ".\n"){
-                    //empty message                    
+                    //empty message
                     return acc;
                 }
 
@@ -89,7 +89,7 @@ export default class Txtpost extends BotInteraction {
 
                 if (part.startsWith(".img:")){
                     //this message contains an image-url
-                    part = part.substring(5);                    
+                    part = part.substring(5);
                 }
 
                 //create new message
@@ -112,12 +112,12 @@ export default class Txtpost extends BotInteraction {
                 acc.push(msg);
                 return acc;
               }, []);;
-            
+
             for (let messageIndex in txtpostMessages){
                 let message: TxtpostMessage = txtpostMessages[messageIndex];
                 let sentMessage: Message | undefined;
-                
-                //replace tag placeholders                
+
+                //replace tag placeholders
                 if (message.content.match(tagExpression)){
                     txtpostMessages.forEach(msg => {
                         if (msg.tag != null && msg.url != null){
@@ -129,8 +129,8 @@ export default class Txtpost extends BotInteraction {
                 //post message
                 if (message.isEmbed){
                     //if message is an embed convert it
-                    const jsonPost: any = JSON.parse(message.content);                    
-                    sentMessage = await channel?.send({embeds: [jsonPost.embed], allowedMentions: { "parse": [] }});                    
+                    const jsonPost: any = JSON.parse(message.content);
+                    sentMessage = await channel?.send({embeds: [jsonPost.embed], allowedMentions: { "parse": [] }});
                 }
                 else if (message.isCompnentsV2){
                     //if message is an componentsV2 container convert it
@@ -151,8 +151,8 @@ export default class Txtpost extends BotInteraction {
                     await sentMessage?.pin();
                     await (await channel.messages.fetch({ limit: 1})).first()?.delete();
                 }
-            }            
-        }        
+            }
+        }
 
         await interaction.editReply(`Posted txt-file`);
     }

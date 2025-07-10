@@ -10,13 +10,13 @@ export default class ModalHandler {
         this.id = id;
         this.interaction = interaction;
         switch (id) {
-            case 'colourOverrideSelect': 
+            case 'colourOverrideSelect':
             case 'colourOverrideSelect2':
             case 'colourOverrideSelect3':
                 this.overrideColour(interaction); break;
 	        case 'christmasColourOverrideSelect':
-                this.setChristmasOverrideSelect(interaction); break;        
-            default: 
+                this.setChristmasOverrideSelect(interaction); break;
+            default:
                 if (id.startsWith('selfassign')) {
                     this.handleSelfAssign(interaction);
                 }
@@ -38,18 +38,18 @@ export default class ModalHandler {
         const newColourRole: string = `colour_${selectedRole}`;
         const { cosmeticCollectionRoleNames, cosmeticKcRoleNames, cosmeticTrialedRoleNames, colours, stripRole, categorize, hierarchy, getColourPanelComponents } = this.client.util;
         const user = await interaction.guild?.members.fetch(interaction.user.id);
-        const userRoles = await user?.roles.cache.map(role => role.id) || [];        
-        
+        const userRoles = await user?.roles.cache.map(role => role.id) || [];
+
         //reset the StringSelectionMenu
-        const getComps = getColourPanelComponents.bind(this.client.util)        
-        if (interaction.isMessageComponent()){         
+        const getComps = getColourPanelComponents.bind(this.client.util)
+        if (interaction.isMessageComponent()){
             await interaction.message.edit({ components: await getComps(interaction)});
         }
 
         //if user has not the tag but tag belongs to hierarchy tags check for an higher hierarchy tag
         const hasHigherRole = (role: string) => {
             try {
-                if (!categorize(role) || categorize(role) === 'vanity' || categorize(role) === '') return false;                
+                if (!categorize(role) || categorize(role) === 'vanity' || categorize(role) === '') return false;
                 const categorizedHierarchy = hierarchy[categorize(role)];
                 const sliceFromIndex: number = categorizedHierarchy.indexOf(role) + 1;
                 const hierarchyList = categorizedHierarchy.slice(sliceFromIndex);
@@ -110,8 +110,8 @@ export default class ModalHandler {
                 .setDescription('The selected role does not exist!');
             return await interaction.editReply({ embeds: [errorEmbed] });
         }
-        
-        const colourRoleObject = await interaction.guild?.roles.fetch(stripRole(getRoles(interaction.guild.id)[newColourRole])) as Role;      
+
+        const colourRoleObject = await interaction.guild?.roles.fetch(stripRole(getRoles(interaction.guild.id)[newColourRole])) as Role;
 
         //assign the colour-role to the user
         if (!userRoles.includes(stripRole(getRoles(interaction.guild.id)[newColourRole]))) {
@@ -171,7 +171,7 @@ export default class ModalHandler {
 
         //reset the StringSelectionMenu
         const container = interaction.message.components;
-        if (interaction.isMessageComponent()){         
+        if (interaction.isMessageComponent()){
             await interaction.message.edit({ components: container});
         }
 
@@ -182,7 +182,7 @@ export default class ModalHandler {
         const addResultEmbed = new EmbedBuilder()
             .setColor(colours.discord.green)
             .setDescription(`<@&${roleIds[0]}> successfully applied.`);
-        
+
         const removeResultEmbed = new EmbedBuilder()
             .setColor(colours.discord.green)
             .setDescription(`<@&${roleIds[0]}> successfully removed.`);
@@ -206,11 +206,11 @@ export default class ModalHandler {
                 await user.roles.add(roleIds[0]);
                 return await interaction.editReply({embeds: [addResultEmbed]});
             }
-        } else if (roleIds.length > 1) {    
-            //special logic for hierarchy tags            
+        } else if (roleIds.length > 1) {
+            //special logic for hierarchy tags
             const hasRoleOrHigher = (role: string) => {
                 try {
-                    if (!categorize(role) || categorize(role) === 'vanity' || categorize(role) === '') return false;                
+                    if (!categorize(role) || categorize(role) === 'vanity' || categorize(role) === '') return false;
                     const categorizedHierarchy = hierarchy[categorize(role)];
                     const sliceFromIndex: number = categorizedHierarchy.indexOf(role);
                     const hierarchyList = categorizedHierarchy.slice(sliceFromIndex);
@@ -227,10 +227,10 @@ export default class ModalHandler {
 
             //check for required tags
             for (let i = 1; i < roleIds.length; i++) {
-                if (!/^[+-]?\d+(\.\d+)?$/.test(roleIds[i])) { 
+                if (!/^[+-]?\d+(\.\d+)?$/.test(roleIds[i])) {
                     if (hasRoleOrHigher(roleIds[i])) {
                         await user.roles.add(roleIds[0]);
-                        return await interaction.editReply({embeds: [addResultEmbed]});                        
+                        return await interaction.editReply({embeds: [addResultEmbed]});
                     } else {
                         if (i > 1) {
                             roleReqError += ", ";
@@ -248,7 +248,7 @@ export default class ModalHandler {
                     }
 
                     roleReqError += `<@&${roleIds[i]}>`;
-                    }                    
+                    }
             }
 
             const errorEmbed = new EmbedBuilder()

@@ -113,7 +113,7 @@ export default class TrialLeaderboard extends BotInteraction {
                 break;
             }
             case 'lastThreeMonths':{
-                dateTo = new Date(timestamp.getFullYear(), timestamp.getMonth(), timestamp.getDate(), 23, 59, 59);                
+                dateTo = new Date(timestamp.getFullYear(), timestamp.getMonth(), timestamp.getDate(), 23, 59, 59);
                 timestamp.setMonth(timestamp.getMonth() - 3);
                 dateFrom = new Date(timestamp.getFullYear(), timestamp.getMonth(), timestamp.getDate(), 0, 0, 0);
                 description = 'Last 3 Months';
@@ -140,7 +140,7 @@ export default class TrialLeaderboard extends BotInteraction {
         }
 
         let whereRegion = '';
-        
+
         if (region === 'North America') {
             whereRegion = `trial.link like '%954775172609630218%'`;
             description += " - NA only";
@@ -152,7 +152,7 @@ export default class TrialLeaderboard extends BotInteraction {
         else {
             whereRegion = `trial.link = trial.link`;
         }
-        
+
         // Get top 10 Trials hosted members
         const trialsHosted = await dataSource.createQueryBuilder()
             .select('trial.host', 'user')
@@ -165,7 +165,7 @@ export default class TrialLeaderboard extends BotInteraction {
             .getRawMany();
 
         // Get top 10 Trials participated members
-        const trialsParticipated = await dataSource.createQueryBuilder(TrialParticipation, 'trialParticipation')                
+        const trialsParticipated = await dataSource.createQueryBuilder(TrialParticipation, 'trialParticipation')
         .innerJoinAndSelect('trialParticipation.trial', 'trial')
         .addSelect('trialParticipation.participant', 'user')
         .addSelect('COUNT(*)', 'count')

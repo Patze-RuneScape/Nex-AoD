@@ -32,14 +32,14 @@ export default class MigrateDb extends BotInteraction {
     private async saveIfTrial(message: Message){
         const { dataSource } = this.client;
 
-        const hostExpression: RegExp = /\`Host:\` <@(\d+)>/;                
+        const hostExpression: RegExp = /\`Host:\` <@(\d+)>/;
         const localtimeExpression: RegExp = /\`Local Time:\` <t:(\d+):f>/;
         const timeExpression: RegExp = /\`Time:\` <t:(\d+):f>/;
         const trialeeExpression: RegExp = /\`Discord:\` <@(\d+)>/;
         const roleExpression: RegExp = /\`Tag:\` <@&(\d+)>/;
 
         if (!(message.author.id === '1040250917674569790')){
-        //if (!(message.author.id === '1204871827407642635')){                
+        //if (!(message.author.id === '1204871827407642635')){
             return;
         }
 
@@ -58,19 +58,19 @@ export default class MigrateDb extends BotInteraction {
             const localtimeMatches = messageContent.match(localtimeExpression);
             const timeMatches = messageContent.match(timeExpression);
             const trialeeMatches = messageContent.match(trialeeExpression);
-            
+
             const roleMatches = messageContent.match(roleExpression);
 
             let userId = hostMatches ? hostMatches[1] : '';
             let trialeeId = trialeeMatches ? trialeeMatches[1] : '';
-            
+
             let roleId = roleMatches ? roleMatches[1] : '';
             let time = localtimeMatches ? localtimeMatches[1] : '';
             if (time == ''){
                 time = timeMatches ? timeMatches[1] : '';
             }
             let date: Date = new Date(Number(`${time}000`));
-            
+
             if (!userId || !trialeeId || !roleId || !time) {
                 //shouldn't happen
                 return;
@@ -104,15 +104,15 @@ export default class MigrateDb extends BotInteraction {
             const participantReposittory = dataSource.getRepository(TrialParticipation);
             await participantReposittory.save(trialParticipants);
         }
-        
+
         return;
     }
 
     async run(interaction: ChatInputCommandInteraction) {
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-        
+
         const naChannel = await this.client.channels.fetch('954775172609630218') as TextChannel;
-        const euChannel = await this.client.channels.fetch('765479967114919937') as TextChannel;        
+        const euChannel = await this.client.channels.fetch('765479967114919937') as TextChannel;
         const oldEuChannel = await this.client.channels.fetch('1053834651791265792') as TextChannel;
         const oldNaChannel = await this.client.channels.fetch('1053834698654224474') as TextChannel;
 
@@ -120,16 +120,16 @@ export default class MigrateDb extends BotInteraction {
         let message = await naChannel.messages
           .fetch({ limit: 1 })
           .then(messagePage => (messagePage.size === 1 ? messagePage.at(0) : null));
-      
+
         while (message) {
           await naChannel.messages
             .fetch({ limit: 100, before: message.id })
             .then(messagePage => {
-              messagePage.forEach(msg => 
+              messagePage.forEach(msg =>
                 //messages.push(msg)
                 this.saveIfTrial(msg)
             );
-      
+
               // Update our message pointer to be the last message on the page of messages
               message = 0 < messagePage.size ? messagePage.at(messagePage.size - 1) : null;
             });
@@ -138,16 +138,16 @@ export default class MigrateDb extends BotInteraction {
         message = await euChannel.messages
           .fetch({ limit: 1 })
           .then(messagePage => (messagePage.size === 1 ? messagePage.at(0) : null));
-      
+
         while (message) {
           await euChannel.messages
             .fetch({ limit: 100, before: message.id })
             .then(messagePage => {
-              messagePage.forEach(msg => 
+              messagePage.forEach(msg =>
                 //messages.push(msg)
                 this.saveIfTrial(msg)
             );
-      
+
               // Update our message pointer to be the last message on the page of messages
               message = 0 < messagePage.size ? messagePage.at(messagePage.size - 1) : null;
             });
@@ -156,16 +156,16 @@ export default class MigrateDb extends BotInteraction {
         message = await oldEuChannel.messages
           .fetch({ limit: 1 })
           .then(messagePage => (messagePage.size === 1 ? messagePage.at(0) : null));
-      
+
         while (message) {
           await oldEuChannel.messages
             .fetch({ limit: 100, before: message.id })
             .then(messagePage => {
-              messagePage.forEach(msg => 
+              messagePage.forEach(msg =>
                 //messages.push(msg)
                 this.saveIfTrial(msg)
             );
-      
+
               // Update our message pointer to be the last message on the page of messages
               message = 0 < messagePage.size ? messagePage.at(messagePage.size - 1) : null;
             });
@@ -174,16 +174,16 @@ export default class MigrateDb extends BotInteraction {
         message = await oldNaChannel.messages
           .fetch({ limit: 1 })
           .then(messagePage => (messagePage.size === 1 ? messagePage.at(0) : null));
-      
+
         while (message) {
           await oldNaChannel.messages
             .fetch({ limit: 100, before: message.id })
             .then(messagePage => {
-              messagePage.forEach(msg => 
+              messagePage.forEach(msg =>
                 //messages.push(msg)
                 this.saveIfTrial(msg)
             );
-      
+
               // Update our message pointer to be the last message on the page of messages
               message = 0 < messagePage.size ? messagePage.at(messagePage.size - 1) : null;
             });

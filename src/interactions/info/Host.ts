@@ -25,7 +25,7 @@ export default class Host extends BotInteraction {
     get slashData() {
         return new SlashCommandBuilder()
             .setName(this.name)
-            .setDescription(this.description)            
+            .setDescription(this.description)
             /*.addStringOption((option) => option.setName('type').setDescription('7- or 4-Man').addChoices(
                 ...this.hostTypes
             ).setRequired(false))*/
@@ -36,10 +36,10 @@ export default class Host extends BotInteraction {
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         //const type: string = interaction.options.getString('type', false) ?? '7man';
         const is7man = true;//type === '7man';
-        const message: string | null = interaction.options.getString('message', false);        
+        const message: string | null = interaction.options.getString('message', false);
 
         const { colours, emojis } = this.client.util;
-        
+
         const firstRow = new ActionRowBuilder<ButtonBuilder>()
             .addComponents(
                 new ButtonBuilder()
@@ -99,7 +99,7 @@ export default class Host extends BotInteraction {
         if (message) {
             embed.setDescription(message);
         }
-        
+
         const channel = interaction.channel as TextChannel;
         await channel.send(
             { embeds: [embed], components: [firstRow, secondRow] }

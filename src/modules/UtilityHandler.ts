@@ -99,34 +99,34 @@ export default class UtilityHandler {
             mockTrialReacts: '1360666087393329392',
         }
     }
-    
+
     // register all roles that have an cosmetic colour override role (same name with prefex colour_)
     // limit at 25 roles per list
     get cosmeticTrialedRoleNames(): string[]{
         return [
             'nexAodFCMember',
             'fourMan',
-            'sevenMan',            
-            'fallenAngel', 
+            'sevenMan',
+            'fallenAngel',
             'trialTeam',
-            'nightmareOfNihils',            
+            'nightmareOfNihils',
         ];
     }
 
     get cosmeticCollectionRoleNames(): string[]{
-        return [            
-            'ofThePraesul', 
+        return [
+            'ofThePraesul',
             'goldenPraesul',
-            'elementalist', 
-            'sageOfElements', 
-            'masterOfElements', 
-            'praetorianLibrarian', 
-            'coreRupted', 
+            'elementalist',
+            'sageOfElements',
+            'masterOfElements',
+            'praetorianLibrarian',
+            'coreRupted',
             'ollivandersSupplier',
-            'smokeDemon', 
-            'shadowCackler', 
-            'truebornVampyre', 
-            'glacyteOfLeng',             
+            'smokeDemon',
+            'shadowCackler',
+            'truebornVampyre',
+            'glacyteOfLeng',
         ];
     }
 
@@ -159,7 +159,7 @@ export default class UtilityHandler {
     get categories(): Categories {
         return {
             killCount: ['kc10k', 'kc20k', 'kc30k', 'kc40k', 'kc50k', 'kc60k', 'kc70k', 'kc80k', 'kc90k', 'kc100k'],
-            collectionLog: ['ofThePraesul', 'goldenPraesul'],            
+            collectionLog: ['ofThePraesul', 'goldenPraesul'],
             vanity: ['fallenAngel', 'nightmareOfNihils', 'elementalist', 'sageOfElements', 'masterOfElements', 'smokeDemon', 'shadowCackler', 'truebornVampyre', 'glacyteOfLeng', 'praetorianLibrarian', 'coreRupted', 'ollivandersSupplier'],
         }
     }
@@ -186,7 +186,7 @@ export default class UtilityHandler {
             category = 'killCount';
         } else if (this.categories.collectionLog.includes(role)) {
             category = 'collectionLog';
-        } else if (this.categories.vanity.includes(role)) {            
+        } else if (this.categories.vanity.includes(role)) {
             category = 'vanity';
         } else {
             category = ''
@@ -337,7 +337,7 @@ export default class UtilityHandler {
 //                    nextEntry.setEmoji(checkRoleObject.icon);
                 }
 
-                options.push(nextEntry);                
+                options.push(nextEntry);
             }
         }
 
@@ -354,7 +354,7 @@ export default class UtilityHandler {
   //                  nextEntry.setEmoji(checkRoleObject.icon);
                 }
 
-                options2.push(nextEntry);                
+                options2.push(nextEntry);
             }
         }
 
@@ -371,7 +371,7 @@ export default class UtilityHandler {
     //                nextEntry.setEmoji(checkRoleObject.icon);
                 }
 
-                options3.push(nextEntry);                
+                options3.push(nextEntry);
             }
         }
 
@@ -388,14 +388,14 @@ export default class UtilityHandler {
             .addOptions(
                 ...options2
             );
-        
+
         const selectMenu3 = new StringSelectMenuBuilder()
             .setCustomId('colourOverrideSelect3')
             .setPlaceholder('Pick a killcount role colour!')
             .addOptions(
                 ...options3
             );
-            
+
         const actionRow = new ActionRowBuilder<StringSelectMenuBuilder>()
             .addComponents(selectMenu);
 
@@ -403,8 +403,8 @@ export default class UtilityHandler {
             .addComponents(selectMenu2);
 
         const actionRow3 = new ActionRowBuilder<StringSelectMenuBuilder>()
-            .addComponents(selectMenu3);     
-            
+            .addComponents(selectMenu3);
+
         const removeButton = new ButtonBuilder()
             .setCustomId('removeColour')
             .setLabel('Remove')
@@ -453,34 +453,34 @@ export default class UtilityHandler {
           get(url, (res) => {
             const { statusCode } = res;
             const contentType = res.headers['content-type'];
-      
+
             // Check for HTTP status errors
             if (statusCode !== 200) {
               reject(new Error(`Request Failed. Status Code: ${statusCode}`));
               res.resume();
               return;
             }
-      
+
             // Ensure we are getting a text content type
             if (!/^text\/plain/.test(contentType || '')) {
               reject(new Error(`Invalid content-type. Expected text/plain but received ${contentType}`));
               res.resume();
               return;
             }
-      
+
             res.setEncoding('utf8');
             let data = '';
-      
+
             // Collect the data chunks
             res.on('data', (chunk: string) => {
               data += chunk;
             });
-      
+
             // When the response has ended, resolve the promise with the data
             res.on('end', () => {
               resolve(data);
             });
-      
+
           }).on('error', (err) => {
             reject(err);
           });

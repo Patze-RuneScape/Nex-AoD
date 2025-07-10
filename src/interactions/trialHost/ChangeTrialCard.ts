@@ -45,7 +45,7 @@ export default class ChangeTrialCard extends BotInteraction {
         return new SlashCommandBuilder()
             .setName(this.name)
             .setDescription(this.description)
-            .addStringOption((option) => option.setName('message_id').setDescription('Trial Card message ID').setRequired(true))            
+            .addStringOption((option) => option.setName('message_id').setDescription('Trial Card message ID').setRequired(true))
             .addStringOption((option) => option.setName('role').setDescription('Trialee Role').addChoices(
                 ...this.roleOptions
             ).setRequired(false))
@@ -82,7 +82,7 @@ export default class ChangeTrialCard extends BotInteraction {
     async run(interaction: ChatInputCommandInteraction) {
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const role: string | null = interaction.options.getString('role', false);
-        const user: User | null = interaction.options.getUser('host', false);        
+        const user: User | null = interaction.options.getUser('host', false);
         const messageId: string = interaction.options.getString('message_id', true);
         const time: string | null = interaction.options.getString('time', false);
 
@@ -126,7 +126,7 @@ export default class ChangeTrialCard extends BotInteraction {
                 const matches = description.match(expression);
                 userId = matches ? matches[1] : '';
                 if (userId != user.id){
-                    description = description.replace(`\`Host:\` <@${userId}>`, `\`Host:\` <@${user.id}>`);                    
+                    description = description.replace(`\`Host:\` <@${userId}>`, `\`Host:\` <@${user.id}>`);
                 }
             }
         }
@@ -166,7 +166,7 @@ export default class ChangeTrialCard extends BotInteraction {
                 if (`<t:${parsedLocalTime}:f>` != this.parseTime(time)){
                     description = description.replace(`\`Local Time:\` <t:${parsedLocalTime}:f>`, `\`Local Time:\` ${this.parseTime(time)}`);
                 }
-                
+
                 const matchesRelativeTime = description.match(relativeTimeExpression);
                 parsedRelativeTime = matchesRelativeTime ? matchesRelativeTime[1] : '';
                 if (`<t:${parsedRelativeTime}:R>` != this.parseRelativeTime(time)){

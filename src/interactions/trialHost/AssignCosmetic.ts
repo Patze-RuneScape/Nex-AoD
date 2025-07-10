@@ -100,7 +100,7 @@ export default class Cosmetic extends BotInteraction {
 
         const hasHigherRole = (role: string) => {
             try {
-                if (!categorize(role) || categorize(role) === 'vanity' || categorize(role) === '') return false;                
+                if (!categorize(role) || categorize(role) === 'vanity' || categorize(role) === '') return false;
                 const categorizedHierarchy = hierarchy[categorize(role)];
                 const sliceFromIndex: number = categorizedHierarchy.indexOf(role) + 1;
                 const hierarchyList = categorizedHierarchy.slice(sliceFromIndex);
@@ -118,7 +118,7 @@ export default class Cosmetic extends BotInteraction {
         const roleId = stripRole(getRoles(interaction?.guild?.id)[role]);
         if (!hasHigherRole(role)) await user?.roles.add(roleId);
         embedColour = roleObject.color;
-        
+
         if (!(userRoles?.includes(roleId)) && !hasHigherRole(role)) {
             sendMessage = true;
         }
@@ -135,7 +135,7 @@ export default class Cosmetic extends BotInteraction {
         };
 
         const embed = new EmbedBuilder()
-            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() || this.client.user?.avatarURL() || 'https://cdn.discordapp.com/attachments/1027186342620299315/1054206984360050709/445px-Reeves_pet.png' })            
+            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() || this.client.user?.avatarURL() || 'https://cdn.discordapp.com/attachments/1027186342620299315/1054206984360050709/445px-Reeves_pet.png' })
             .setTimestamp()
             .setColor(embedColour)
             .setDescription(`Congratulations to <@${userResponse.id}> on achieving ${getRoles(interaction?.guild?.id)[role]}!`);

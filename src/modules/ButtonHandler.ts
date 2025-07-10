@@ -26,7 +26,7 @@ export default class ButtonHandler {
             case 'startTrial': this.startTrial(interaction); break;
             case 'removeColour': this.removeColour(interaction); break;
 	        case 'removeChristmasColour': this.removeChristmasColour(interaction); break;
-            default: 
+            default:
                 if (id.startsWith('selfassign')) {
                     this.handleSelfAssign(interaction, id.slice(11));
                 }
@@ -432,7 +432,7 @@ export default class ButtonHandler {
         }
     }
 
-    //#endregion    
+    //#endregion
 
     //#region vanity tag
     private async removeColour(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
@@ -445,7 +445,7 @@ export default class ButtonHandler {
         //remove all other colour-roles
         for (const cosmeticRole of cosmeticTrialedRoleNames){
             const colourRole = `colour_${cosmeticRole}`;
-            
+
             if (userRoles.includes(stripRole(getRoles(interaction.guild.id)[colourRole]))) {
                 await user.roles.remove(stripRole(getRoles(interaction.guild.id)[colourRole]));
             }
@@ -453,7 +453,7 @@ export default class ButtonHandler {
 
         for (const cosmeticRole of cosmeticCollectionRoleNames){
             const colourRole = `colour_${cosmeticRole}`;
-            
+
             if (userRoles.includes(stripRole(getRoles(interaction.guild.id)[colourRole]))) {
                 await user.roles.remove(stripRole(getRoles(interaction.guild.id)[colourRole]));
             }
@@ -461,7 +461,7 @@ export default class ButtonHandler {
 
         for (const cosmeticRole of cosmeticKcRoleNames){
             const colourRole = `colour_${cosmeticRole}`;
-            
+
             if (userRoles.includes(stripRole(getRoles(interaction.guild.id)[colourRole]))) {
                 await user.roles.remove(stripRole(getRoles(interaction.guild.id)[colourRole]));
             }
@@ -503,7 +503,7 @@ export default class ButtonHandler {
         const addResultEmbed = new EmbedBuilder()
             .setColor(colours.discord.green)
             .setDescription(`<@&${roleIds[0]}> successfully applied.`);
-        
+
         const removeResultEmbed = new EmbedBuilder()
             .setColor(colours.discord.green)
             .setDescription(`<@&${roleIds[0]}> successfully removed.`);
@@ -528,10 +528,10 @@ export default class ButtonHandler {
                 return await interaction.editReply({embeds: [addResultEmbed]});
             }
         } else if (roleIds.length > 1) {
-            //special logic for hierarchy tags            
+            //special logic for hierarchy tags
             const hasRoleOrHigher = (role: string) => {
                 try {
-                    if (!categorize(role) || categorize(role) === 'vanity' || categorize(role) === '') return false;                
+                    if (!categorize(role) || categorize(role) === 'vanity' || categorize(role) === '') return false;
                     const categorizedHierarchy = hierarchy[categorize(role)];
                     const sliceFromIndex: number = categorizedHierarchy.indexOf(role);
                     const hierarchyList = categorizedHierarchy.slice(sliceFromIndex);
@@ -548,10 +548,10 @@ export default class ButtonHandler {
 
             //check for required tags
             for (let i = 1; i < roleIds.length; i++) {
-                if (!/^[+-]?\d+(\.\d+)?$/.test(roleIds[i])) { 
+                if (!/^[+-]?\d+(\.\d+)?$/.test(roleIds[i])) {
                     if (hasRoleOrHigher(roleIds[i])) {
                         await user.roles.add(roleIds[0]);
-                        return await interaction.editReply({embeds: [addResultEmbed]});                        
+                        return await interaction.editReply({embeds: [addResultEmbed]});
                     } else {
                         if (i > 1) {
                             roleReqError += ", ";
@@ -569,9 +569,9 @@ export default class ButtonHandler {
                     }
 
                     roleReqError += `<@&${roleIds[i]}>`;
-                    }                    
+                    }
             }
-                        
+
             const errorEmbed = new EmbedBuilder()
                 .setColor(colours.discord.red)
                 .setDescription(`You need any of the following tags to set this colour!\nTags:${roleReqError}`);

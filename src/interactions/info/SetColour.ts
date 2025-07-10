@@ -50,7 +50,7 @@ export default class SetColour extends BotInteraction {
         try {
             const roleId = getMvpRole(interaction.guild?.id, interaction.user.id);
             if (roleId) {
-                const roleObject = await interaction.guild?.roles.fetch(roleId) as Role;                
+                const roleObject = await interaction.guild?.roles.fetch(roleId) as Role;
                 roleObject.setColor(colour as any);
             } else {
                 throw new Error('No role exists.')

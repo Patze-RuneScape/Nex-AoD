@@ -98,7 +98,7 @@ export default class SetTrialMember extends BotInteraction {
                 const matches = description.match(expression);
                 userId = matches ? matches[1] : '';
                 if (userId != user.id){
-                    description = description.replace(`\`Host:\` <@${userId}>`, `\`Host:\` <@${user.id}>`);                    
+                    description = description.replace(`\`Host:\` <@${userId}>`, `\`Host:\` <@${user.id}>`);
                 }
             }
         }

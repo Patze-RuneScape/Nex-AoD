@@ -29,7 +29,7 @@ export default class Bot extends Client {
         .catch((err) => {
             console.error("Error during Data Source initialization", err)
         });
-        
+
         this.color = 0x7e686c;
         this.dataSource = AppDataSource;
         this.commandsRun = 0;

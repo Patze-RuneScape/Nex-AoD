@@ -22,10 +22,10 @@ export default class ForumCreate extends BotInteraction {
             .addStringOption((option) => option.setName('name').setDescription('Thread name').setRequired(true))
             .addStringOption((option) => option.setName('message').setDescription('Initial message').setRequired(true))
             .addAttachmentOption((option) => option.setName('thumbnail').setDescription('Optional Thumbnail Image for the forum').setRequired(false));
-    }    
+    }
 
     async run(interaction: ChatInputCommandInteraction) {
-        await interaction.deferReply({ flags: MessageFlags.Ephemeral });        
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const channel: TextChannel = interaction.options.getChannel('channel', true);
         const threadName: String = interaction.options.getString('name', true);
         const threadMessage: String = interaction.options.getString('message', true);
@@ -43,7 +43,7 @@ export default class ForumCreate extends BotInteraction {
                         files: [{
                             attachment: thumbnail.url,
                             name: thumbnail.name,
-                        }]                    
+                        }]
                     }
                 };
             } else {

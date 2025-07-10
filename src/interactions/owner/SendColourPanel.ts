@@ -49,7 +49,7 @@ export default class SendColourPanel extends BotInteraction {
                 .setTimestamp()
                 .setColor(colours.discord.green)
                 .setDescription('Choose an colour-override from any cosmetic tag you have achieved!\r\nYou need to own the corresponding Tag to be able to select it\'s colour!');
-            
+
             const getComps = getColourPanelComponents.bind(this.client.util)
             await channel.send(
                 { embeds: [embed], components: await getComps(interaction)}
@@ -62,7 +62,7 @@ export default class SendColourPanel extends BotInteraction {
                 .setColor(colours.discord.green)
                 .setThumbnail('https://runescape.wiki/images/Green_Santa_hat.png')
                 .setDescription('Choose between 6 differen colour overrides and matching santa-hat role icons!');
-            
+
             const getComps = getChristmasColourPanelComponents.bind(this.client.util)
 
             await channel.send(

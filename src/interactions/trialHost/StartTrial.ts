@@ -149,7 +149,7 @@ export default class Pass extends BotInteraction {
             //Check if UTC 19 is 21 in Middle-Europe, if not add one hour
             //NA is fix 23:59
             //EU is 19 during summer time and 20 during winter time
-            const hours = new Date(Date.UTC(currentYear, currentMonth, currentDate, 19, 0)).toLocaleString('de-DE', {hour: '2-digit',   hour12: false, timeZone: 'Europe/Berlin' }).substring(0, 2) == '21' ? 19 : 20;            
+            const hours = new Date(Date.UTC(currentYear, currentMonth, currentDate, 19, 0)).toLocaleString('de-DE', {hour: '2-digit',   hour12: false, timeZone: 'Europe/Berlin' }).substring(0, 2) == '21' ? 19 : 20;
 
             let finalDateObject;
             if (region === 'North America') {
@@ -262,7 +262,7 @@ export default class Pass extends BotInteraction {
             \`Type:\` ${trialType === 'mock' ? 'Mock Trial' : 'Real Trial'}
             ${time ?
                     `\`Game Time:\` \`${time}\`
-                    \`Local Time:\` ${this.parseTime(time)}                    
+                    \`Local Time:\` ${this.parseTime(time)}
                     \`Relative Time:\` ${this.parseRelativeTime(time)}`
                     :
                     `\`Game Time:\` \`${finalDate}\`
