@@ -1,7 +1,7 @@
-import { ActivityType, TextChannel } from 'discord.js';
+import { ActivityType, TextChannel, EmbedBuilder } from 'discord.js';
 import Bot from '../Bot';
 import BotEvent from '../types/BotEvent';
-import { getChannels } from '../GuildSpecifics';
+import { getChannels, getCommands } from '../GuildSpecifics';
 import { guildId } from '../../config.json';
 
 export default class Ready extends BotEvent {
@@ -40,5 +40,22 @@ export default class Ready extends BotEvent {
             });
             this.statuses.push(current);
         }, 300000);
+
+        //Info Message About Host-Command
+        let advertiseHost = false;
+        const nonTrialed7manChannel = await guild.channels.fetch(getChannels(guild.id).nonTrialed7man) as TextChannel;
+        const trialed7manChannel = await guild.channels.fetch(getChannels(guild.id).trialed7man) as TextChannel;
+        const hostCommandId = await getCommands(guild.id)['host'];
+        const { colours } = this.client.util;
+        if (advertiseHost) {
+            setInterval((): void => {
+                const replyEmbed = new EmbedBuilder()
+                    .setTitle('Host your AoD Session!')
+                    .setColor(colours.discord.green)
+                    .setDescription(`You can use </host:${hostCommandId}> to create your own host card for AoD!`);
+                nonTrialed7manChannel.send({ embeds: [replyEmbed] });
+                trialed7manChannel.send({ embeds: [replyEmbed] });
+            }, 86400000);
+        }
     }
 }

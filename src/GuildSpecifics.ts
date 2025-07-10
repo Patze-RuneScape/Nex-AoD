@@ -6,6 +6,10 @@ interface Roles {
     [roleName: string]: string;
 }
 
+interface Commands {
+    [commandName: string]: string;
+}
+
 export function getChannels(guildId: string | undefined) : Channels {
     if (guildId === undefined) {
         //command run outside a guild
@@ -13,7 +17,7 @@ export function getChannels(guildId: string | undefined) : Channels {
 
         }
     }
-    
+
     if (guildId === '1370324695324561439') {
         //Nex Angel of Death Bot Testing
         return {
@@ -26,6 +30,8 @@ export function getChannels(guildId: string | undefined) : Channels {
             mockResult: '1370324700382761005',
             trialResult: '1370324700382761005',
             mockInfo: '1370324701452177445',
+            nonTrialed7man: '1370324699409678367',
+            trialed7man: '1370324699409678368',
         }
     }
 
@@ -41,8 +47,10 @@ export function getChannels(guildId: string | undefined) : Channels {
             mockResult: '702083377066410002',
             trialResult: '702083377066410002',
             mockInfo: '1068881120319504486',
+            nonTrialed7man: '815643777351417889',
+            trialed7man: '337730468013277198',
         }
-    }    
+    }
 
     //unknown guild
     return {
@@ -80,7 +88,7 @@ export function getRoles(guildId: string | undefined) : Roles {
             trialee: '<@&1370324695345528878>',
             magicMT: '<@&1370324695383150684>',
             magicBase: '<@&1370324695383150685>',
-            rangeMT: '<@&1370324695362048089>',            
+            rangeMT: '<@&1370324695362048089>',
             rangeBase: '<@&1370324695383150683>',
             chinner: '<@&1370324695383150682>',
             meleeMT: '<@&1370324695362048087>',
@@ -116,20 +124,20 @@ export function getRoles(guildId: string | undefined) : Roles {
             coreRupted: '<@&1370324695513174018>',
             ollivandersSupplier: '<@&1370324695513174019>',
             colour_fourMan: '<@&1370324695731277878>',
-            colour_sevenMan: '<@&1370324695731277879>',                
-            colour_fallenAngel: '<@&1370324695810838613>', 
-            colour_nightmareOfNihils: '<@&1370324695810838615>', 
-            colour_elementalist: '<@&1370324695810838610>', 
+            colour_sevenMan: '<@&1370324695731277879>',
+            colour_fallenAngel: '<@&1370324695810838613>',
+            colour_nightmareOfNihils: '<@&1370324695810838615>',
+            colour_elementalist: '<@&1370324695810838610>',
             colour_sageOfElements: '<@&1370324695810838611>',
-            colour_masterOfElements: '<@&1370324695810838612>', 
-            colour_smokeDemon: '<@&1370324695773347868>', 
-            colour_shadowCackler: '<@&1370324695773347865>', 
-            colour_truebornVampyre: '<@&1370324695773347867>', 
-            colour_glacyteOfLeng: '<@&1370324695773347866>', 
-            colour_praetorianLibrarian: '<@&1370324695773347869>', 
-            colour_coreRupted: '<@&1370324695773347870>', 
+            colour_masterOfElements: '<@&1370324695810838612>',
+            colour_smokeDemon: '<@&1370324695773347868>',
+            colour_shadowCackler: '<@&1370324695773347865>',
+            colour_truebornVampyre: '<@&1370324695773347867>',
+            colour_glacyteOfLeng: '<@&1370324695773347866>',
+            colour_praetorianLibrarian: '<@&1370324695773347869>',
+            colour_coreRupted: '<@&1370324695773347870>',
             colour_ollivandersSupplier: '<@&1370324695810838609>',
-            colour_ofThePraesul: '<@&1370324695731277876>', 
+            colour_ofThePraesul: '<@&1370324695731277876>',
             colour_goldenPraesul: '<@&1370324695731277877>',
             colour_trialTeam: '<@&1370324695810838614>',
             colour_kc10k: '<@&1370324695731277880>',
@@ -211,20 +219,20 @@ export function getRoles(guildId: string | undefined) : Roles {
             coreRupted: '<@&1243337593882542222>',
             ollivandersSupplier: '<@&1243337779039965234>',
             colour_fourMan: '<@&1262092410981318696>',
-            colour_sevenMan: '<@&1262092300314480791>',                
-            colour_fallenAngel: '<@&1262090273538969682>', 
-            colour_nightmareOfNihils: '<@&1262089742804189255>', 
-            colour_elementalist: '<@&1262090603924164639>', 
+            colour_sevenMan: '<@&1262092300314480791>',
+            colour_fallenAngel: '<@&1262090273538969682>',
+            colour_nightmareOfNihils: '<@&1262089742804189255>',
+            colour_elementalist: '<@&1262090603924164639>',
             colour_sageOfElements: '<@&1262090529236189236>',
-            colour_masterOfElements: '<@&1262090418267488357>', 
-            colour_smokeDemon: '<@&1262091008037093460>', 
-            colour_shadowCackler: '<@&1262091258843893900>', 
-            colour_truebornVampyre: '<@&1262091083349885140>', 
-            colour_glacyteOfLeng: '<@&1262091186848399360>', 
-            colour_praetorianLibrarian: '<@&1262090933252395099>', 
-            colour_coreRupted: '<@&1262090829212946594>', 
+            colour_masterOfElements: '<@&1262090418267488357>',
+            colour_smokeDemon: '<@&1262091008037093460>',
+            colour_shadowCackler: '<@&1262091258843893900>',
+            colour_truebornVampyre: '<@&1262091083349885140>',
+            colour_glacyteOfLeng: '<@&1262091186848399360>',
+            colour_praetorianLibrarian: '<@&1262090933252395099>',
+            colour_coreRupted: '<@&1262090829212946594>',
             colour_ollivandersSupplier: '<@&1262090691329261620>',
-            colour_ofThePraesul: '<@&1262092579541876749>', 
+            colour_ofThePraesul: '<@&1262092579541876749>',
             colour_goldenPraesul: '<@&1262092501112721498>',
             colour_trialTeam: '<@&1262090165221064755>',
             colour_kc10k: '<@&1262092205330272286>',
@@ -270,7 +278,7 @@ export function getMvpRole(guildId: string | undefined, userId: string) : string
         //command run outside a guild
         return;
     }
-    
+
     if (guildId === '1370324695324561439') {
         //Nex Angel of Death Bot Testing
         const data: any = {
@@ -343,4 +351,29 @@ export function getMvpRole(guildId: string | undefined, userId: string) : string
 
     //unknown guild
     return;
+}
+
+//for building </{name}:{id}> command mention
+export function getCommands(guildId: string | undefined): Commands {
+    if (guildId === undefined) {
+        //command run outside a guild
+        return {};
+    }
+
+    if (guildId === '1370324695324561439') {
+        //Nex Angel of Death Bot Testing
+        return {
+            host: '1392921440222711849'
+        }
+    }
+
+    if (guildId === '315710189762248705') {
+        //Nex, Angel of Death
+        return {
+            host: '1392922820517826601'
+        }
+    }
+
+    //unknown guild
+    return {};
 }
