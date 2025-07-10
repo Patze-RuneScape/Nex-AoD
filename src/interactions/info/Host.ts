@@ -26,15 +26,18 @@ export default class Host extends BotInteraction {
         return new SlashCommandBuilder()
             .setName(this.name)
             .setDescription(this.description)            
-            .addStringOption((option) => option.setName('type').setDescription('7- or 4-Man').addChoices(
+            /*.addStringOption((option) => option.setName('type').setDescription('7- or 4-Man').addChoices(
                 ...this.hostTypes
-            ).setRequired(false))            
+            ).setRequired(false))*/
+            .addStringOption((option) => option.setName('message').setDescription('Add a Message').setRequired(false))
     }
 
     async run(interaction: ChatInputCommandInteraction) {
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-        const type: string = interaction.options.getString('type', false) ?? '7man';
-        const is7man = type === '7man';
+        //const type: string = interaction.options.getString('type', false) ?? '7man';
+        const is7man = true;//type === '7man';
+        const message: string | null = interaction.options.getString('message', false);        
+
         const { colours, emojis } = this.client.util;
         
         const firstRow = new ActionRowBuilder<ButtonBuilder>()
@@ -88,10 +91,7 @@ export default class Host extends BotInteraction {
         const embed = new EmbedBuilder()
             .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() || this.client.user?.avatarURL() || 'https://media.discordapp.net/attachments/1027186342620299315/1047598720834875422/618px-Solly_pet_1.png' })
             .setColor(colours.lightblue)
-            .setDescription(`
-            > **General**\n
-            \`Host:\` <@${interaction.user.id}>
-            \`Type:\` ${is7man ? 'AoD 7-Man' : 'AoD 4-Man'}`)
+            .setDescription(message ? message : ``)
             .addFields(
                 fields
             )
