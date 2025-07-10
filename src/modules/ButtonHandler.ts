@@ -2,7 +2,7 @@ import { ActionRowBuilder, APIEmbedField, ButtonBuilder, ButtonInteraction, Butt
 import { Trial } from '../entity/Trial';
 import { TrialParticipation } from '../entity/TrialParticipation';
 import Bot from '../Bot';
-import { getRoles } from '../GuildSpecifics';
+import { getChannels, getRoles } from '../GuildSpecifics';
 
 export default interface ButtonHandler { client: Bot; id: string; interaction: ButtonInteraction }
 
@@ -83,8 +83,11 @@ export default class ButtonHandler {
         const { colours, checkForUserId, getEmptyObject, getTeamCount } = this.client.util;
 
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
+        const isTrialCard = interaction.channelId == getChannels(interaction.guildId)["naMock"] || interaction.channelId == getChannels(interaction.guildId)["euMock"] || interaction.channelId == getChannels(interaction.guildId)["naTrial"] || interaction.channelId == getChannels(interaction.guildId)["euTrial"]
+
         const hasRolePermissions = await this.client.util.hasRolePermissions(this.client, ['trialTeamProbation', 'trialTeam', 'organizer', 'admin'], interaction);
-        if (hasRolePermissions) {
+        if (hasRolePermissions || !isTrialCard) {
             const messageEmbed = interaction.message.embeds[0];
             const messageContent = messageEmbed.data.description;
             const fields = messageEmbed.fields;
@@ -102,7 +105,7 @@ export default class ButtonHandler {
                 const firstEmptyObject = getEmptyObject(roleString, fields);
                 if (firstEmptyObject) {
                     const { index } = firstEmptyObject;
-                    const isProbation = await this.client.util.hasRolePermissions(this.client, ['trialTeamProbation'], interaction)
+                    const isProbation = await this.client.util.hasRolePermissions(this.client, ['trialTeamProbation'], interaction) && isTrialCard
 
                     if (isProbation){
                         fields[index].value = `<@${interaction.user.id}> (Probation)`;
