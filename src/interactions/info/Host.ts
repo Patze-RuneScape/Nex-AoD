@@ -88,14 +88,17 @@ export default class Host extends BotInteraction {
             { name: `${emojis.freedom} Free`, value: '`Empty`', inline: true },
         ]
 
-        const embed = new EmbedBuilder()
+        let embed = new EmbedBuilder()
             .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() || this.client.user?.avatarURL() || 'https://media.discordapp.net/attachments/1027186342620299315/1047598720834875422/618px-Solly_pet_1.png' })
             .setColor(colours.lightblue)
-            .setDescription(message ? message : ``)
             .addFields(
                 fields
             )
             .setFooter({ text: `0/${is7man ? '7' : '4'} Players` });
+
+        if (message) {
+            embed.setDescription(message);
+        }
         
         const channel = interaction.channel as TextChannel;
         await channel.send(
