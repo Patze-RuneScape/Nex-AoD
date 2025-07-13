@@ -28,17 +28,17 @@ export default class Pass extends BotInteraction {
         const assignOptions: any = {
             'Magic Minion Tank': 'magicMT',
             'Magic Base': 'magicBase',
-            'Range Minion Tank': 'rangeMT',
-            'Range Base': 'rangeBase',
-            'Range Hammer': 'chinner',
-            'Magic/Range Minion Tank': 'mrMT',
-            'Magic/Range Hammer': 'mrHammer',
-            'Magic/Range Base': 'mrBase',
+            'Ranged Minion Tank': 'rangeMT',
+            'Ranged Base': 'rangeBase',
+            'Ranged Hammer': 'chinner',
+            'Magic-Ranged Minion Tank': 'mrMT',
+            'Magic-Ranged Hammer': 'mrHammer',
+            'Magic-Ranged Base': 'mrBase',
             'Necromancy Base': 'necroBase',
             'Necromancy Hammer': 'necroHammer',
             'Necromancy Minion Tank': 'necroMT',
-            'Magic/Melee Minion Tank': 'mmMT',
-            'Magic/Melee Hammer': 'mmHammer',
+            'Magic-Melee Minion Tank': 'mmMT',
+            'Magic-Melee Hammer': 'mmHammer',
         }
         const options: any = [];
         Object.keys(assignOptions).forEach((key: string) => {
