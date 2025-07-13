@@ -28,6 +28,8 @@ export default class Trialed extends BotInteraction {
             'Necromancy Base': 'necroBase',
             'Necromancy Hammer': 'necroHammer',
             'Necromancy Minion Tank': 'necroMT',
+            'Magic/Melee Minion Tank': 'mmMT',
+            'Magic/Melee Hammer': 'mmHammer',
             'Trial Team': 'trialTeam',
             'Trial Team Probation': 'trialTeamProbation',
         }
@@ -119,7 +121,7 @@ export default class Trialed extends BotInteraction {
         const logEmbed = new EmbedBuilder()
             .setTimestamp()
             .setColor(embedColour)
-            .setDescription(channel ? `
+            .setDescription(channel && sendPublic ? `
             ${getRoles(interaction?.guild?.id)[role]} was assigned to <@${userResponse.id}> by <@${interaction.user.id}>.
             **Message**: [${returnedMessage.id}](${returnedMessage.url})
             ` : `${getRoles(interaction?.guild?.id)[role]} was assigned to <@${userResponse.id}> by <@${interaction.user.id}>.`);

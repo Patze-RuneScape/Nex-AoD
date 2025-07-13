@@ -158,6 +158,8 @@ export function getRoles(guildId: string | undefined) : Roles {
             pinkSanta: '<@&1370324695961964551>',
             blackSanta: '<@&1370324695961964550>',
             editor: '<@&1370324695676620818>',
+            mmMT: '<@&1393874767257403482>',
+            mmHammer: '<@&1393874815655612478>',
         }
     }
 
@@ -253,6 +255,8 @@ export function getRoles(guildId: string | undefined) : Roles {
             pinkSanta: '<@&1311083772078325861>',
             blackSanta: '<@&1311084184152047709>',
             editor: '<@&1246805554089820201>',
+            mmMT: '<@&1393873279663476776>',
+            mmHammer: '<@&1393873004827512852>',
         }
     }
 
