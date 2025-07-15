@@ -4,7 +4,7 @@ import { getRoles } from '../GuildSpecifics';
 
 export default interface StringSelectHandler { client: Bot; id: string; interaction: StringSelectMenuInteraction }
 
-export default class ModalHandler {
+export default class StringSelectHandler {
     constructor(client: Bot, id: string, interaction: StringSelectMenuInteraction<'cached'>) {
         this.client = client;
         this.id = id;
@@ -195,6 +195,8 @@ export default class ModalHandler {
                 .setColor(colours.discord.red)
                 .setDescription(`Unallowed Role-Assign!`)]});
         }
+
+        //todo - cleanup all other cosmetic tags
 
         //remove should always work
         if (userRoles.includes(roleIds[0])) {
