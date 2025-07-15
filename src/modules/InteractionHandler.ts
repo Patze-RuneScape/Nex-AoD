@@ -1,5 +1,5 @@
 import { Dirent, readdirSync } from 'fs';
-import { EmbedBuilder, Collection, Interaction } from 'discord.js';
+import { EmbedBuilder, Collection, Interaction, MessageFlags } from 'discord.js';
 import Bot from '../Bot';
 import BotInteraction from '../types/BotInteraction';
 import ButtonHandler from './ButtonHandler';
@@ -140,7 +140,7 @@ export default class InteractionHandler extends EventEmitter {
                                 },
                                 true
                             );
-                            return await interaction.reply({ content: 'You do not have permissions to run this command. This incident has been logged.', ephemeral: true });
+                            return await interaction.reply({ content: 'You do not have permissions to run this command. This incident has been logged.', flags: MessageFlags.Ephemeral });
                         }
                         break;
                     case 'ELEVATED_ROLE':
@@ -162,7 +162,7 @@ export default class InteractionHandler extends EventEmitter {
                                     },
                                     true
                                 );
-                                return await interaction.reply({ content: 'You do not have permissions to run this command. This incident has been logged.', ephemeral: true });
+                                return await interaction.reply({ content: 'You do not have permissions to run this command. This incident has been logged.', flags: MessageFlags.Ephemeral });
                             }
                         } else {
                             if (!hasRolePermissions) {
@@ -173,7 +173,7 @@ export default class InteractionHandler extends EventEmitter {
                                     },
                                     true
                                 );
-                                return await interaction.reply({ content: 'You do not have permissions to run this command. This incident has been logged.', ephemeral: true });
+                                return await interaction.reply({ content: 'You do not have permissions to run this command. This incident has been logged.', flags: MessageFlags.Ephemeral });
                             }
                         }
                         break;
@@ -186,7 +186,7 @@ export default class InteractionHandler extends EventEmitter {
                                 },
                                 true
                             );
-                            return await interaction.reply({ content: 'You do not have permissions to run this command. This incident has been logged.', ephemeral: true });
+                            return await interaction.reply({ content: 'You do not have permissions to run this command. This incident has been logged.', flags: MessageFlags.Ephemeral });
                         }
                         break;
                     case 'TRIAL_HOST':
@@ -198,7 +198,7 @@ export default class InteractionHandler extends EventEmitter {
                                 },
                                 true
                             );
-                            return await interaction.reply({ content: 'You do not have permissions to run this command. This incident has been logged.', ephemeral: true });
+                            return await interaction.reply({ content: 'You do not have permissions to run this command. This incident has been logged.', flags: MessageFlags.Ephemeral });
                         }
                         break;
                     case 'TRIAL_TEAM':
@@ -210,7 +210,7 @@ export default class InteractionHandler extends EventEmitter {
                                 },
                                 true
                             );
-                            return await interaction.reply({ content: 'You do not have permissions to run this command. This incident has been logged.', ephemeral: true });
+                            return await interaction.reply({ content: 'You do not have permissions to run this command. This incident has been logged.', flags: MessageFlags.Ephemeral });
                         }
                         break;
                     case 'EDITOR':
@@ -222,7 +222,7 @@ export default class InteractionHandler extends EventEmitter {
                                 },
                                 true
                             );
-                            return await interaction.reply({ content: 'You do not have permissions to run this command. This incident has been logged.', ephemeral: true });
+                            return await interaction.reply({ content: 'You do not have permissions to run this command. This incident has been logged.', flags: MessageFlags.Ephemeral });
                         }
                         break;
                     default:

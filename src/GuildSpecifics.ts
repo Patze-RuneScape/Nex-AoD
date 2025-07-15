@@ -32,6 +32,7 @@ export function getChannels(guildId: string | undefined) : Channels {
             mockInfo: '1370324701452177445',
             nonTrialed7man: '1370324699409678367',
             trialed7man: '1370324699409678368',
+            adminDiscordBots: '1370324701452177445',
         }
     }
 
@@ -49,6 +50,7 @@ export function getChannels(guildId: string | undefined) : Channels {
             mockInfo: '1068881120319504486',
             nonTrialed7man: '815643777351417889',
             trialed7man: '337730468013277198',
+            adminDiscordBots: '610585715155140653',
         }
     }
 

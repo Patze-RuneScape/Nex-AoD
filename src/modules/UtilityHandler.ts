@@ -1,9 +1,9 @@
 import * as config from '../../config.json';
-import { EmbedBuilder, ChatInputCommandInteraction, Interaction, APIEmbedField, ActionRowBuilder, StringSelectMenuOptionBuilder, StringSelectMenuBuilder, Role, ButtonBuilder, ButtonStyle} from 'discord.js';
+import { EmbedBuilder, ChatInputCommandInteraction, Interaction, APIEmbedField, ActionRowBuilder, StringSelectMenuOptionBuilder, StringSelectMenuBuilder, Role, ButtonBuilder, ButtonStyle, AttachmentBuilder, TextChannel} from 'discord.js';
 import Bot from '../Bot';
 import { Override } from '../entity/Override';
 import { get } from 'https';
-import { getRoles } from '../GuildSpecifics';
+import { getChannels, getRoles } from '../GuildSpecifics';
 
 export default interface UtilityHandler {
     client: Bot;
@@ -11,6 +11,7 @@ export default interface UtilityHandler {
     random(array: Array<any>): Array<number>;
     loadingEmbed: EmbedBuilder;
     loadingText: string;
+    reuploadImage(url: string): Promise<string>;
 }
 
 interface Emojis {
@@ -485,5 +486,55 @@ export default class UtilityHandler {
             reject(err);
           });
         });
-      };
+    };
+
+    public async reuploadImage(url: string): Promise<string> {
+        console.log(`--- DEBUG: Entered reuploadImage function for URL: ${url}`);
+
+        const assetChannelId = getChannels(config.guildId).adminDiscordBots;
+        console.log(`--- DEBUG: Read assetChannelId from this.channels. It is: ${assetChannelId}`);
+
+        if (!assetChannelId || assetChannelId === 'YOUR_CHANNEL_ID_HERE') {
+            console.error('--- DEBUG: FATAL: adminDiscordBots is not configured in the environment variables or is set to placeholder.');
+            this.client.logger.error({
+                message: 'adminDiscordBots is not configured!',
+                error: new Error('Asset channel not set or is placeholder.'),
+                handler: 'UtilityHandler'
+            });
+            return url;
+        }
+
+        try {
+            console.log(`--- DEBUG: Attempting to fetch channel ${assetChannelId}`);
+            const botAssetChannel = await this.client.channels.fetch(assetChannelId) as TextChannel;
+            if (!botAssetChannel) {
+                throw new Error(`Could not find the asset channel with ID: ${assetChannelId}`);
+            }
+
+            console.log(`--- DEBUG: Fetching image from ${url}`);
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch image: ${response.statusText}`);
+            }
+            const arrayBuffer = await response.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+
+            const attachment = new AttachmentBuilder(buffer, { name: 'image.png' });
+
+            console.log(`--- DEBUG: Sending attachment to Discord channel...`);
+            const message = await botAssetChannel.send({ files: [attachment] });
+            const newUrl = message.attachments.first()!.url;
+
+            console.log(`--- DEBUG: Successfully re-uploaded. New URL: ${newUrl}`);
+            return newUrl;
+        } catch (error: any) {
+            this.client.logger.error({
+                message: `--- DEBUG: FAILED during reuploadImage for URL: ${url}`,
+                error: error,
+                handler: 'UtilityHandler'
+            });
+            console.error(error);
+            return url;
+        }
+    }
 }

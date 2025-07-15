@@ -28,3 +28,5 @@ db.json
 db-backups*
 *.sqlite
 *test.ts
+/upload_archives*
+message-tags.json
