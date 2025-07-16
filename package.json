@@ -10,6 +10,7 @@
     "author": "Patze",
     "license": "MIT",
     "dependencies": {
+        "axios": "^1.10.0",
         "bufferutil": "^4.0.5",
         "count-interval": "^1.0.1",
         "discord-api-types": "^0.38.1",

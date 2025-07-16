@@ -2,7 +2,8 @@ import path = require('path');
 import BotInteraction from '../../types/BotInteraction';
 import { ChatInputCommandInteraction, SlashCommandBuilder, Role, MessageFlags, AttachmentBuilder, TextChannel } from 'discord.js';
 import fs = require('fs');
-const svg2img = require('svg2img')
+import axios from 'axios';
+const svg2img = require('svg2img');
 
 export default class GetRoleImage extends BotInteraction {
     get name() {
@@ -31,10 +32,10 @@ export default class GetRoleImage extends BotInteraction {
         const iconUrl = role.iconURL();
 
         if (iconUrl) {
-            const image = await fetch(iconUrl);
+            const image = await axios.get(iconUrl, { responseType: 'arraybuffer' });
 
             if (image) {
-                const attachment = new AttachmentBuilder(Buffer.from(image.blob.toString(), 'utf-8'), {
+                const attachment = new AttachmentBuilder(Buffer.from(image.data, 'binary'), {
                     name: `${role.name}.png`,
                 });
 
