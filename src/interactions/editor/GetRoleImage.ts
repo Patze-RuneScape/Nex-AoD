@@ -22,16 +22,18 @@ export default class GetRoleImage extends BotInteraction {
         return new SlashCommandBuilder()
             .setName(this.name)
             .setDescription(this.description)
-            .addRoleOption((option) => option.setName('role').setDescription('Role, whose Image to return').setRequired(true));
+            .addRoleOption((option) => option.setName('role').setDescription('Role, whose Image to return').setRequired(true))
+            .addBooleanOption((option) => option.setName('defaulticon').setDescription('Grab Default Icon with the colour instead of image').setRequired(true));
     }
 
     async run(interaction: ChatInputCommandInteraction) {
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const role: Role = interaction.options.getRole('role', true) as Role;
+        const defaultIcon: boolean = interaction.options.getBoolean('defaulticon', true);
 
         const iconUrl = role.iconURL();
 
-        if (iconUrl) {
+        if (iconUrl && !defaultIcon) {
             const image = await axios.get(iconUrl, { responseType: 'arraybuffer' });
 
             if (image) {
