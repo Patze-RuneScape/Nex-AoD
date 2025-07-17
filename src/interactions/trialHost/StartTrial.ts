@@ -230,13 +230,17 @@ export default class Pass extends BotInteraction {
         const controlPanel = new ActionRowBuilder<ButtonBuilder>()
             .addComponents(
                 new ButtonBuilder()
-                    .setCustomId('startTrial')
-                    .setLabel('Start Trial')
+                    .setCustomId('passTrialee')
+                    .setLabel('Pass')
                     .setStyle(ButtonStyle.Success),
+                new ButtonBuilder()
+                    .setCustomId('failTrialee')
+                    .setLabel('Fail')
+                    .setStyle(ButtonStyle.Danger),
                 new ButtonBuilder()
                     .setCustomId('disbandTrial')
                     .setLabel('Disband')
-                    .setStyle(ButtonStyle.Danger)
+                    .setStyle(ButtonStyle.Primary)
             );
 
         const checkRole = (category: string) => {

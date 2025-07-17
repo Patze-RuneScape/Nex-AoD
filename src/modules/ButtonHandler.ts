@@ -1,4 +1,4 @@
-import { ActionRowBuilder, APIEmbedField, ButtonBuilder, ButtonInteraction, ButtonStyle, Embed, EmbedBuilder, InteractionResponse, Message, ModalActionRowComponentBuilder, ModalBuilder, TextChannel, TextInputBuilder, TextInputStyle, MessageFlags } from 'discord.js';
+import { ActionRowBuilder, APIEmbedField, ButtonInteraction, Embed, EmbedBuilder, InteractionResponse, Message, ModalActionRowComponentBuilder, ModalBuilder, TextChannel, TextInputBuilder, TextInputStyle, MessageFlags } from 'discord.js';
 import { Trial } from '../entity/Trial';
 import { TrialParticipation } from '../entity/TrialParticipation';
 import Bot from '../Bot';
@@ -23,7 +23,6 @@ export default class ButtonHandler {
             case 'selectCruor': this.selectCruor(interaction); break;
             case 'selectFumus': this.selectFumus(interaction); break;
             case 'disbandTrial': this.disbandTrial(interaction); break;
-            case 'startTrial': this.startTrial(interaction); break;
             case 'removeColour': this.removeColour(interaction); break;
 	        case 'removeChristmasColour': this.removeChristmasColour(interaction); break;
             default:
@@ -217,9 +216,11 @@ export default class ButtonHandler {
         const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
         const messageEmbed: Embed = interaction.message.embeds[0];
         const messageContent: string | undefined = messageEmbed.data.description;
+        const fields: APIEmbedField[] = messageEmbed.fields;
         const expression: RegExp = /\`Host:\` <@(\d+)>/;
         const replyEmbed: EmbedBuilder = new EmbedBuilder();
         let userId: string = '';
+
         if (messageContent) {
             const matches = messageContent.match(expression);
             userId = matches ? matches[1] : '';
@@ -236,7 +237,8 @@ export default class ButtonHandler {
                 const newMessageContent = messageContent?.replace('> **Team**', '');
                 const newEmbed = new EmbedBuilder()
                     .setColor(messageEmbed.color)
-                    .setDescription(`${newMessageContent}> Trial disbanded <t:${this.currentTime}:R>.`);
+                    .setDescription(`${newMessageContent}> Trial disbanded <t:${this.currentTime}:R>.`)
+                    .setFields(fields);
                 await interaction.message.edit({ content: '', embeds: [newEmbed], components: [] });
                 replyEmbed.setColor(colours.discord.green);
                 replyEmbed.setDescription(`Trial successfully disbanded!`);
@@ -250,73 +252,6 @@ export default class ButtonHandler {
             this.client.logger.log(
                 {
                     message: `Attempted restricted permissions. { command: Disband Trial, user: ${interaction.user.username}, channel: ${interaction.channel} }`,
-                    handler: this.constructor.name,
-                },
-                true
-            );
-            return await interaction.editReply({ content: 'You do not have permissions to run this command. This incident has been logged.' });
-        }
-    }
-
-    private async startTrial(interaction: ButtonInteraction<'cached'>): Promise<Message<true> | InteractionResponse<true> | void> {
-        const { colours, isTeamFull } = this.client.util; // Add isTeamFull if team full is required again.
-        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-        const hasRolePermissions: boolean | undefined = await this.client.util.hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
-        const messageEmbed: Embed = interaction.message.embeds[0];
-        const messageContent: string | undefined = messageEmbed.data.description;
-        const fields: APIEmbedField[] = messageEmbed.fields;
-        const expression: RegExp = /\`Host:\` <@(\d+)>/;
-        const replyEmbed: EmbedBuilder = new EmbedBuilder();
-        let userId: string = '';
-        if (messageContent) {
-            const matches = messageContent.match(expression);
-            userId = matches ? matches[1] : '';
-            if (!userId) {
-                // Should never really make it to this.
-                replyEmbed.setColor(colours.discord.red)
-                replyEmbed.setDescription('Host could not be detected.')
-                return await interaction.editReply({ embeds: [replyEmbed] });
-            }
-        }
-        if (hasRolePermissions) {
-            const hasElevatedRole = await this.client.util.hasRolePermissions(this.client, ['trialHost', 'organizer', 'admin', 'owner'], interaction);
-            if ((interaction.user.id === userId) || hasElevatedRole) {
-                if (isTeamFull(fields)) {
-                    const trialStarted = `> **Moderation**\n\n ⬥ Trial started <t:${this.currentTime}:R>.\n\n> **Team**`;
-                    const newMessageContent = messageContent?.replace('> **Team**', trialStarted);
-                    const newEmbed = new EmbedBuilder()
-                        .setColor(messageEmbed.color)
-                        .setFields(fields)
-                        .setDescription(`${newMessageContent}`);
-                    const controlPanel = new ActionRowBuilder<ButtonBuilder>()
-                        .addComponents(
-                            new ButtonBuilder()
-                                .setCustomId('passTrialee')
-                                .setLabel('Pass')
-                                .setStyle(ButtonStyle.Success),
-                            new ButtonBuilder()
-                                .setCustomId('failTrialee')
-                                .setLabel('Fail')
-                                .setStyle(ButtonStyle.Danger)
-                        );
-                    await interaction.message.edit({ content: '', embeds: [newEmbed], components: [controlPanel] });
-                    replyEmbed.setColor(colours.discord.green);
-                    replyEmbed.setDescription(`Trial successfully started!`);
-                    return await interaction.editReply({ embeds: [replyEmbed] });
-                } else {
-                    replyEmbed.setColor(colours.discord.red)
-                    replyEmbed.setDescription(`The team is not full yet.`)
-                    return await interaction.editReply({ embeds: [replyEmbed] });
-                }
-            } else {
-                replyEmbed.setColor(colours.discord.red)
-                replyEmbed.setDescription(`Only <@${userId}> or an elevated role can start this trial.`)
-                return await interaction.editReply({ embeds: [replyEmbed] });
-            }
-        } else {
-            this.client.logger.log(
-                {
-                    message: `Attempted restricted permissions. { command: Start Trial, user: ${interaction.user.username}, channel: ${interaction.channel} }`,
                     handler: this.constructor.name,
                 },
                 true
