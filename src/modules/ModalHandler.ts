@@ -164,10 +164,8 @@ export default class ModalHandler {
                     replyEmbed.setDescription(`Message could not be parsed correctly.`)
                     return await interaction.editReply({ embeds: [replyEmbed] });
                 }
-                const messageContentWithoutStarted = splitResults[0];
-                const dirtyStarted = splitResults[1];
-                const started = dirtyStarted?.replace('> **Team**', '').trim();
-                const newMessageContent = `${messageContentWithoutStarted}⬥ ${started}\n⬥ <@${trialeeId}> ${trialType.includes('Mock') ? 'is ready for trial' : 'successfully passed'} <t:${this.currentTime}:R>!\n\n> **Team**`;
+                const messageContentWithoutStarted = splitResults[0].replace('> **Team**', '').trim();
+                const newMessageContent = `${messageContentWithoutStarted}\n⬥ <@${trialeeId}> ${trialType.includes('Mock') ? 'is ready for trial' : 'successfully passed'} <t:${this.currentTime}:R>!\n\n> **Team**`;
 
                 // Save trial to database.
                 await this.saveTrial(interaction, trialeeId, roleId, userId, fields);
@@ -289,10 +287,8 @@ export default class ModalHandler {
                     replyEmbed.setDescription(`Message could not be parsed correctly.`)
                     return await interaction.editReply({ embeds: [replyEmbed] });
                 }
-                const messageContentWithoutStarted = splitResults[0];
-                const dirtyStarted = splitResults[1];
-                const started = dirtyStarted?.replace('> **Team**', '').trim();
-                const newMessageContent = `${messageContentWithoutStarted}⬥ ${started}\n⬥ <@${trialeeId}> ${trialType.includes('Mock') ? 'is not ready for trial' : 'failed'} <t:${this.currentTime}:R>!\n\n> **Team**`;
+                const messageContentWithoutStarted = splitResults[0].replace('> **Team**', '').trim();
+                const newMessageContent = `${messageContentWithoutStarted}\n⬥ <@${trialeeId}> ${trialType.includes('Mock') ? 'is not ready for trial' : 'failed'} <t:${this.currentTime}:R>!\n\n> **Team**`;
 
                 // Save trial to database.
                 await this.saveTrial(interaction, trialeeId, roleId, userId, fields);
