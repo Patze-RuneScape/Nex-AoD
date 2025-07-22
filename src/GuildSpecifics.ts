@@ -162,6 +162,7 @@ export function getRoles(guildId: string | undefined) : Roles {
             editor: '<@&1370324695676620818>',
             mmMT: '<@&1393874767257403482>',
             mmHammer: '<@&1393874815655612478>',
+            meleeRangedMT: '<@&1397254544433348608>'
         }
     }
 
@@ -259,6 +260,7 @@ export function getRoles(guildId: string | undefined) : Roles {
             editor: '<@&1246805554089820201>',
             mmMT: '<@&1393873279663476776>',
             mmHammer: '<@&1393873004827512852>',
+            meleeRangedMT: '<@&1397254096129490974>'
         }
     }
 

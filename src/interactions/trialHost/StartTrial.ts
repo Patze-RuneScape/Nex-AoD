@@ -39,6 +39,7 @@ export default class Pass extends BotInteraction {
             'Necromancy Minion Tank': 'necroMT',
             'Magic-Melee Minion Tank': 'mmMT',
             'Magic-Melee Hammer': 'mmHammer',
+            'Melee-Ranged Minion Tank': 'meleeRangedMT',
         }
         const options: any = [];
         Object.keys(assignOptions).forEach((key: string) => {
@@ -74,7 +75,7 @@ export default class Pass extends BotInteraction {
     get categories(): Categories {
         return {
             base: ['magicBase', 'mrBase', 'necroBase'],
-            glacies: ['mrMT', 'necroMT', 'rangeMT', 'magicMT', 'mmMT'],
+            glacies: ['mrMT', 'necroMT', 'rangeMT', 'magicMT', 'mmMT', 'meleeRangedMT'],
             hammer: ['chinner', 'mrHammer', 'necroHammer', 'mmHammer'],
         }
     }

@@ -30,6 +30,7 @@ export default class Trialed extends BotInteraction {
             'Necromancy Minion Tank': 'necroMT',
             'Magic-Melee Minion Tank': 'mmMT',
             'Magic-Melee Hammer': 'mmHammer',
+            'Melee-Ranged Minion Tank': 'meleeRangedMT',
             'Trial Team': 'trialTeam',
             'Trial Team Probation': 'trialTeamProbation',
         }
