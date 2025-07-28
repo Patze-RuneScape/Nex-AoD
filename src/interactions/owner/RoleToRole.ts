@@ -28,6 +28,9 @@ export default class RoleToRole extends BotInteraction {
         const sourceRole: APIRole | Role = interaction.options.getRole('sourcerole', true);
         const targetRole: APIRole | Role = interaction.options.getRole('targetrole', true);
 
+        await interaction.guild?.roles.fetch();
+        await interaction.guild?.members.fetch();
+
         const role = await interaction.guild?.roles.cache.get(sourceRole.id);
 
         const membersWithRole: GuildMember[] = role?.members.map(member => member) ?? [];
