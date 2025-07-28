@@ -12,7 +12,7 @@ export default class ListMvp extends BotInteraction {
     }
 
     get permissions() {
-        return 'ELEVATED_ROLE';
+        return 'ORGANIZER';
     }
 
     get slashData() {

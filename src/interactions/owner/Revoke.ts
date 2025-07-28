@@ -12,7 +12,7 @@ export default class Revoke extends BotInteraction {
     }
 
     get permissions() {
-        return 'ELEVATED_ROLE';
+        return 'ORGANIZER';
     }
 
     get featureOptions() {

@@ -11,7 +11,7 @@ export default class SendColourPanel extends BotInteraction {
     }
 
     get permissions() {
-        return 'ELEVATED_ROLE';
+        return 'ORGANIZER';
     }
 
     get panelOptions() {
