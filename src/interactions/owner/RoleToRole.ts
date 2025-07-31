@@ -23,7 +23,7 @@ export default class RoleToRole extends BotInteraction {
     }
 
     async run(interaction: ChatInputCommandInteraction) {
-        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+        await interaction.deferReply();
 
         const sourceRole: APIRole | Role = interaction.options.getRole('sourcerole', true);
         const targetRole: APIRole | Role = interaction.options.getRole('targetrole', true);

@@ -23,7 +23,7 @@ export default class CopyRole extends BotInteraction {
     }
 
     async run(interaction: ChatInputCommandInteraction) {
-        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+        await interaction.deferReply();
 
         const role: APIRole | Role = interaction.options.getRole('role', true);
         const name: string = interaction.options.getString('name', true);
