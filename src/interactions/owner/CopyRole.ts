@@ -1,5 +1,5 @@
 import BotInteraction from '../../types/BotInteraction';
-import { ChatInputCommandInteraction, SlashCommandBuilder, Role, MessageFlags, APIRole, RoleCreateOptions, PermissionsBitField } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, Role, APIRole, RoleCreateOptions, PermissionsBitField } from 'discord.js';
 
 export default class CopyRole extends BotInteraction {
     get name() {

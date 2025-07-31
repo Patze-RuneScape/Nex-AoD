@@ -1,5 +1,5 @@
 import BotInteraction from '../../types/BotInteraction';
-import { ChatInputCommandInteraction, SlashCommandBuilder, Role, MessageFlags, APIRole, GuildMember } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, Role, APIRole, GuildMember } from 'discord.js';
 
 export default class RoleToRole extends BotInteraction {
     get name() {
