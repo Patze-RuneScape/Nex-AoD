@@ -87,7 +87,7 @@ export default class ManageMessageShortcut extends BotInteraction {
         } else if (operation === 'remove') {
             // remove: either message or shortcut need to be filled, will delete based on whats found for its values
             if ((messageLink === '' || !match) && shortcut === '') {
-                return await interaction.editReply('U need to at least provide a shortcut or messagelink, whose shortcuts you want to delete!');
+                return await interaction.editReply('You need to at least provide a shortcut or messagelink, whose shortcuts you want to delete!');
             }
 
             if (shortcut !== '') {
@@ -99,7 +99,7 @@ export default class ManageMessageShortcut extends BotInteraction {
                 });
 
                 if (existingEntry) {
-                    await repository.delete(existingEntry);
+                    await repository.remove(existingEntry);
                     return await interaction.editReply(`Successfully deleted shortcut '${shortcut}'.`);
                 }
             }
@@ -115,7 +115,7 @@ export default class ManageMessageShortcut extends BotInteraction {
                 });
 
                 if (existingEntries) {
-                    await repository.delete(existingEntries);
+                    await repository.remove(existingEntries);
                     return await interaction.editReply(`Successfully deleted all shortcuts referencing ${messageLink}.`);
                 }
             }
