@@ -37,7 +37,7 @@ export default class ListMessageShortcut extends BotInteraction {
             }
         });
 
-        if (existingEntries) {
+        if (existingEntries?.length > 0) {
             let message = '';
 
             existingEntries.forEach(entry => {
