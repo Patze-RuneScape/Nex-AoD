@@ -19,4 +19,4 @@ npm run start
 **Acknowledgements**
 
 - [txj-xyz](https://github.com/txj-xyz) for the bot framework.
-- [discord.js](https://discord.js.org/#/) for the TypeScript Discord API.
+- [discord.js](https://discord.js.org/#/) for the TypeScript Discord API. 
