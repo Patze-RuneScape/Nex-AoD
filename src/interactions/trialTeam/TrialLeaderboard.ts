@@ -120,20 +120,20 @@ export default class TrialLeaderboard extends BotInteraction {
                 break;
             }
             case 'currentYear':{
-                dateFrom = new Date(timestamp.getFullYear(), 1, 1, 0, 0, 0);
-                dateTo = new Date(timestamp.getFullYear(), 12, 31, 23, 59, 59);
+                dateFrom = new Date(timestamp.getFullYear(), 0, 1, 0, 0, 0);
+                dateTo = new Date(timestamp.getFullYear(), 11, 31, 23, 59, 59);
                 description = 'Current Year';
                 break;
             }
             case 'lastYear':{
-                dateFrom = new Date(timestamp.getFullYear() - 1, 1, 1, 0, 0, 0);
-                dateTo = new Date(timestamp.getFullYear() - 1, 12, 31, 23, 59, 59);
+                dateFrom = new Date(timestamp.getFullYear() - 1, 0, 1, 0, 0, 0);
+                dateTo = new Date(timestamp.getFullYear() - 1, 11, 31, 23, 59, 59);
                 description = 'Last Year';
                 break;
             }
             default:{
-                dateFrom = new Date(2000, 1, 1, 0, 0, 0);
-                dateTo = new Date(2099, 31, 12, 23, 59, 59);
+                dateFrom = new Date(2000, 0, 1, 0, 0, 0);
+                dateTo = new Date(2099, 11, 31, 23, 59, 59);
                 description = 'All Time';
                 break;
             }
